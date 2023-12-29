@@ -9,4 +9,8 @@ declare global {
 	}
 }
 
+export interface Config {
+	template: string
+}
+
 export {};

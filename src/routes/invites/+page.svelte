@@ -1,15 +1,14 @@
 <script lang="ts">
-	import InviteModal from './components/InviteModal.svelte';
+	import InviteForm from './components/InviteModal.svelte';
 
 	let showModal = false;
-
 	let dialog: HTMLDialogElement;
 
 	$: if (dialog && showModal) dialog.showModal();
 </script>
 
 <dialog class="w-5/6 rounded-md" bind:this={dialog} on:close={() => (showModal = false)}>
-	<InviteModal submitter={(name, time, theme, date) => dialog.close()} {dialog} />
+	<InviteForm submitter={(name, time, theme, date) => dialog.close()} {dialog} />
 </dialog>
 
 <div>

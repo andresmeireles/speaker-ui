@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import LogoutIcon from '../core/icons/LogoutIcon.svelte';
+	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
 </script>
 
 <div class="bg-blue-800 text-gray-100 w-64 flex flex-col">
@@ -15,6 +15,7 @@
 			<li class="px-4 py-2 hover:bg-gray-700">
 				<a class="flex" href="/">Home</a>
 			</li>
+			<li class="px-4 py-2 hover:bg-gray-700"><a class="flex" href="/speakers">Pessoas</a></li>
 			<li class="px-4 py-2 hover:bg-gray-700"><a class="flex" href="/invites">Convites</a></li>
 			<li class="px-4 py-2 hover:bg-gray-700"><a class="flex" href="/templates">Templates</a></li>
 		</ul>
