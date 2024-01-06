@@ -1,13 +1,16 @@
-import { URLS } from '$lib';
+import { PROTECTED_API_URLS } from '$lib';
 import type { Person } from '$lib';
 import { fail } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
 	try {
-		const people = await fetch(URLS.SPEAKERS);
+		console.log("almost, load speakers")
+		const people = await fetch(PROTECTED_API_URLS.SPEAKERS, {
+			credentials: 'include'
+		});
 		if (!people.ok) {
-			return fail(400);
+			return fail(400 );
 		}
 		const peopleJson: Person[] = await people.json();
 
@@ -15,6 +18,8 @@ export const load: PageLoad = async ({ fetch }) => {
 			speakers: peopleJson
 		 };
 	} catch (e) {
-		return {};
+		return {
+			speakers: []
+		};
 	}
 };

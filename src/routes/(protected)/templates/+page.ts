@@ -1,10 +1,11 @@
-import { URLS, type ServerConfig } from "$lib";
+import { PROTECTED_API_URLS, type ServerConfig } from "$lib";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ fetch }) => {
-	const u = `${URLS.CONFIGS}`;
 	try {
-		const configs = await fetch(u);
+		const configs = await fetch(`${PROTECTED_API_URLS.CONFIGS}`, {
+			credentials: 'include'
+		});
 		if (!configs.ok) {
 			throw new Error(configs.statusText);
 		}

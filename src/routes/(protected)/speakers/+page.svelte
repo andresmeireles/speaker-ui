@@ -1,19 +1,55 @@
 <script lang="ts">
 	import RoundButton from '$lib/components/buttons/RoundButton.svelte';
+	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { ActionData, PageData } from './$types';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 	export let form: ActionData;
 
-	let editorId: number = 1;
+	// internal variables
+	let editorId: number = 0;
+	let options = {}
 
 	const close = () => {
 		editorId = 0;
 	};
 
-	$: editorId;
+	$: editorId, form;
+	$: if (form?.updateFail) {
+		toast.push("erro ao atualizar");
+		options = {
+			duration: 5000,
+			theme: {
+				'--toastBackground': '#48BB78',
+				'--toastProgressBackground': '#2F855A'
+			}	
+		}
+	}
+	$: if (form?.cannotUpdate) {
+		toast.push("erro ao enviar atualizacao");
+		options = {
+			duration: 5000,
+			theme: {
+				'--toastBackground': '#48BB78',
+				'--toastProgressBackground': '#2F855A'
+			}	
+		}
+	}
+	$: if (form?.successfulyUpdated) {
+		toast.push("atualizado com sucesso");
+		options = {
+			duration: 5000,
+			theme: {
+				'--toastBackground': '#48BB78',
+				'--toastProgressBackground': '#2F855A'
+			}	
+		}
+		
+	}
 </script>
 
+<SvelteToast {options} />
 <div>
 	<div class="flex justify-between py-4">
 		<h1 class="text-3xl">Pessoas</h1>
@@ -24,7 +60,7 @@
 	{#if form?.success}
 		<p>Sucesso!</p>
 	{/if}
-	<form class={editorId === 0 ? 'block' : 'hidden'} method="POST" action="?/addUser">
+	<form class={editorId === 0 ? 'block' : 'hidden'} method="POST" action="?/writeUser">
 		<div class="py-4 flex">
 			<input
 				type="text"
@@ -37,8 +73,9 @@
 			<RoundButton type="submit" class="w-1/2 bg-blue-800 text-gray-100">Adicionar</RoundButton>
 		</div>
 	</form>
-	<form class={editorId !== 0 ? 'block' : 'hidden'} action="?/updatePerson" method="post">
+	<form class={editorId !== 0 ? 'block' : 'hidden'} action="?/updateUser" method="post" use:enhance>
 		<div class="py-4 flex">
+			<input type="hidden" name="id" value={editorId} />
 			<input
 				type="text"
 				name="speaker"
