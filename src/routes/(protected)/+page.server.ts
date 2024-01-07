@@ -1,4 +1,5 @@
 import { PROTECTED_API_URLS } from "$lib";
+import { fail, redirect } from "@sveltejs/kit";
 import type { Actions } from "./$types";
 
 export const actions = {
@@ -9,10 +10,11 @@ export const actions = {
             }
         })
         if (!r.ok) {
-            console.log(await r.text())
+            console.warn(await r.text())
+            return fail(400, { logoutFail: true })
         }
-        // cookies.delete('session_id')
+        cookies.delete('session_id')
         
-        // throw redirect(302, '/login')
+        throw redirect(302, '/login')
     }
 } satisfies Actions

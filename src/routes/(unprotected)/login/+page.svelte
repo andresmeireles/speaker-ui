@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+	import { triggerToastMessage } from '$lib/actions/toast';
 	import type { ActionData } from './$types';
 	import Confirm from './components/Confirm.svelte';
 	import Login from './components/Login.svelte';
@@ -20,7 +20,7 @@
 					'--toastProgressBackground': '#C53030'
 				}
 			};
-			toast.push(form?.message, options);
+			triggerToastMessage(form?.message, { options: options });
 		}
 		if (form?.doLogin) {
 			insertCodePhase = true;
@@ -28,8 +28,6 @@
 		}
 	}
 </script>
-
-<SvelteToast {options} />
 
 {#if insertCodePhase}
 	<Confirm {email} {form} />

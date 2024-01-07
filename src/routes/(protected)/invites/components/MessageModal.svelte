@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { toast } from '@zerodevx/svelte-toast';
+	import { triggerToastMessage } from '$lib/actions/toast';
 	import { afterUpdate, createEventDispatcher, onMount } from 'svelte';
 
 	// external variables
@@ -21,7 +21,7 @@
 		event.preventDefault();
 		navigator.clipboard.writeText(message);
 		close();
-		toast.push('copiado');
+		triggerToastMessage('copiado');
 	};
 
 	const close = () => {

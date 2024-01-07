@@ -61,7 +61,6 @@ export const actions = {
         });
 
         if (!removeUser.ok) {
-            console.log(await removeUser.text());
             return fail(400, { speaker, removeFail: true });
         }
 

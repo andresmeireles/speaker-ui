@@ -18,7 +18,6 @@ export const actions = {
             })
         });
         if (!req.ok) {
-            console.log(UNPROTECTED_API_URLS.LOGIN)
             return fail(400, { email, message: await req.text(), error: true });
         }
 
@@ -30,13 +29,11 @@ export const actions = {
         const email = formData.get('email')?.toString();
         const stayConnected = formData.get('stay_connected')?.toString() === 'on' ?? false;
         const values = { code, email, stayConnected };
-
-
+        
         if (code?.trim().length === 0) {
             return fail(400, { values, message: 'Code cannot be empty', error: true });
         }
 
-        console.log(`${UNPROTECTED_API_URLS.LOGIN}/confirm`);
         const req = await fetch(`${UNPROTECTED_API_URLS.LOGIN}/confirm`, {
             method: 'POST',
             body: JSON.stringify({

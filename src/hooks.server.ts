@@ -19,7 +19,6 @@ export const handle: Handle = async ({ event, resolve }) => {
             }
         });
 		if (!userInfoRequest.ok) {
-            console.log("erro on me!", await userInfoRequest.text())
 			event.cookies.delete('session_id');
 			throw redirect(302, '/login');
 		}

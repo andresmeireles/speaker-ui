@@ -6,6 +6,7 @@ export interface Invite {
     theme: string
     date: Date
     time: number
+    references: string
     accepted: boolean
     remembered: boolean
 }
@@ -17,6 +18,7 @@ export interface ApiInvite {
     theme: string
     date: string
     time: number
+    references: string
     accepted: boolean
     remembered: boolean
 }

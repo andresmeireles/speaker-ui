@@ -5,7 +5,6 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
 	try {
-		console.log("almost, load speakers")
 		const people = await fetch(PROTECTED_API_URLS.SPEAKERS, {
 			credentials: 'include'
 		});

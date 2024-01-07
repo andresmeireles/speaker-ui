@@ -1,15 +1,14 @@
 <script lang="ts">
 	import RoundButton from '$lib/components/buttons/RoundButton.svelte';
-	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
+	import { triggerToastMessage } from '$lib/actions/toast';
 
 	export let data: PageData;
 	export let form: ActionData;
 
 	// internal variables
 	let editorId: number = 0;
-	let options = {}
 
 	const close = () => {
 		editorId = 0;
@@ -17,39 +16,40 @@
 
 	$: editorId, form;
 	$: if (form?.updateFail) {
-		toast.push("erro ao atualizar");
-		options = {
-			duration: 5000,
-			theme: {
-				'--toastBackground': '#48BB78',
-				'--toastProgressBackground': '#2F855A'
-			}	
-		}
+		triggerToastMessage('erro ao atualizar', {
+			options: {
+				duration: 5000,
+				theme: {
+					'--toastBackground': '#48BB78',
+					'--toastProgressBackground': '#2F855A'
+				}
+			}
+		});
 	}
 	$: if (form?.cannotUpdate) {
-		toast.push("erro ao enviar atualizacao");
-		options = {
-			duration: 5000,
-			theme: {
-				'--toastBackground': '#48BB78',
-				'--toastProgressBackground': '#2F855A'
-			}	
-		}
+		triggerToastMessage('falha ao atualizar', {
+			options: {
+				duration: 5000,
+				theme: {
+					'--toastBackground': '#48BB78',
+					'--toastProgressBackground': '#2F855A'
+				}
+			}
+		});
 	}
 	$: if (form?.successfulyUpdated) {
-		toast.push("atualizado com sucesso");
-		options = {
-			duration: 5000,
-			theme: {
-				'--toastBackground': '#48BB78',
-				'--toastProgressBackground': '#2F855A'
-			}	
-		}
-		
+		triggerToastMessage('atualizado com sucesso', {
+			options: {
+				duration: 5000,
+				theme: {
+					'--toastBackground': '#48BB78',
+					'--toastProgressBackground': '#2F855A'
+				}
+			}
+		});
 	}
 </script>
 
-<SvelteToast {options} />
 <div>
 	<div class="flex justify-between py-4">
 		<h1 class="text-3xl">Pessoas</h1>

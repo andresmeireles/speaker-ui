@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import InviteForm from './components/InviteModal.svelte';
-	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import MessageModal from './components/MessageModal.svelte';
 	import { PROTECTED_API_URLS } from '$lib';
+	import { triggerToastMessage } from '$lib/actions/toast';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -42,28 +41,20 @@
 		form.submit();
 	};
 
-	const options = {
-		duration: 5000,
-		theme: {
-			'--toastBackground': '#48BB78',
-			'--toastProgressBackground': '#2F855A'
-		}
-	};
-
 	if (form?.inviteRemoved) {
-		toast.push('Convite removido com sucesso!');
+		triggerToastMessage('Convite removido com sucesso!');
 	}
 
 	if (form?.inviteConfirmed) {
-		toast.push(form?.requestResponseMessage);
+		triggerToastMessage(form?.requestResponseMessage);
 	}
 
 	if (form?.confirmReqFail) {
-		toast.push('Erro ao confirmar convite');
+		triggerToastMessage('Erro ao confirmar convite');
 	}
 
 	if (form?.noId) {
-		toast.push('ID inválido');
+		triggerToastMessage('ID inválido');
 	}
 
 	const showMessage = async (
@@ -77,7 +68,7 @@
 		});
 
 		if (!req.ok) {
-			toast.push('Erro ao obter mensagem');
+			triggerToastMessage('Erro ao obter mensagem');
 			return;
 		}
 
@@ -98,12 +89,6 @@
 	$: showMessageModal, message, inviteMessageId, invites, showOutdatedInvites;
 </script>
 
-<SvelteToast {options} />
-
-<dialog class="w-5/6 rounded-md" bind:this={dialog} on:close={() => (showModal = false)}>
-	<InviteForm people={data?.speakers ?? []} {dialog} {form} />
-</dialog>
-
 <MessageModal
 	on:close={handleMessageModalClose}
 	dialog={messageDialogRef}
@@ -117,10 +102,7 @@
 	<div class="flex justify-between py-6">
 		<h1 class="text-3xl">Convites</h1>
 		<div>
-			<button
-				on:click={() => (showModal = true)}
-				class="bg-green-600 text-gray-100 px-4 py-2 rounded">Novo</button
-			>
+			<a href="/invite" class="bg-green-600 text-gray-100 px-4 py-2 rounded">Novo</a>
 		</div>
 	</div>
 	<div class="w-full">
@@ -154,7 +136,9 @@
 									>{invite.remembered ? 'Relembrado' : 'Relembrar'}</button
 								>
 							{/if}
-							<button class="rounded-sm bg-green-600 py-1 px-4 text-white">Editar</button>
+							<a href={`/invite/${invite.id}`} class="rounded-sm bg-green-600 py-1 px-4 text-white"
+								>Editar</a
+							>
 							<form id={`remove-${invite.id}`} method="post" action="?/removeInvite">
 								<input type="hidden" name="id" value={invite.id} />
 								<button
