@@ -8,12 +8,25 @@
 	export let data: PageData;
 	export let form: ActionData;
 
+	// show invites
+	let showOutdatedInvites = false;
+	let invites = data.invites?.filter((invite) => {
+		// filter outdated invites
+		if (showOutdatedInvites) {
+			return invite;
+		}
+
+		return new Date() <= invite.date;
+	});
+
+	// message variables
 	let showMessageModal = false;
 	let message = '';
 	let messageDialogRef: HTMLDialogElement;
 	let inviteMessageId: number = 0;
 	let isInvite = true;
 
+	// invite variables
 	let showModal = false;
 	let dialog: HTMLDialogElement = {
 		addEventListener: (a: string, b: () => void) => {}
@@ -82,7 +95,7 @@
 	};
 
 	$: if (dialog && showModal) dialog.showModal();
-	$: showMessageModal, message, inviteMessageId;
+	$: showMessageModal, message, inviteMessageId, invites, showOutdatedInvites;
 </script>
 
 <SvelteToast {options} />
@@ -121,7 +134,7 @@
 				</tr>
 			</thead>
 			<tbody class=" bg-slate-100">
-				{#each data?.invites ?? [] as invite}
+				{#each invites ?? [] as invite}
 					<tr>
 						<td class="text-center border border-slate-200 p-3">{invite.person.name}</td>
 						<td class="text-center border border-slate-200 p-3">{invite.theme}</td>

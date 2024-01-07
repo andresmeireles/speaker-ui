@@ -1,13 +1,22 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
+	import type { LayoutData } from './$types';
+
+	export let data: LayoutData;
 </script>
 
 <div class="bg-blue-800 text-gray-100 w-64 flex flex-col">
 	<div class="flex-grow">
 		<div class="p-4">
 			<div class="flex justify-between">
-				<div>Name</div>
-				<div><LogoutIcon /></div>
+				<div>
+					{data.user.name}
+					<small>{data.user.email}</small>
+				</div>
+				<form method="post" action="?/logout" use:enhance>
+					<button type="submit"><LogoutIcon /></button>
+				</form>
 			</div>
 		</div>
 		<ul class="py-2">

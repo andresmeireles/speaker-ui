@@ -4,6 +4,8 @@ export const PROTECTED_API_URLS = {
     CONFIGS: `${PUBLIC_API_URL}/configs`,
     SPEAKERS: `${PUBLIC_API_URL}/speakers`,
     INVITES: `${PUBLIC_API_URL}/invites`,
+    USERS: `${PUBLIC_API_URL}/users`,
+    LOGOUT: `${PUBLIC_API_URL}/logout`,
 }
 
 export const UNPROTECTED_API_URLS = {
