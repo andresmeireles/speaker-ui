@@ -3,9 +3,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ fetch }) => {
-    const invitesRequest = await fetch(PROTECTED_API_URLS.INVITES, {
-        credentials: 'include'
-    });
+    const invitesRequest = await fetch(PROTECTED_API_URLS.INVITES);
     if (!invitesRequest.ok) {
         return {
             error: true,

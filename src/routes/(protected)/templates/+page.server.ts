@@ -2,14 +2,9 @@ import { PROTECTED_API_URLS, type ServerConfig } from '$lib';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ fetch, cookies }) => {
+export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const configs = await fetch(`${PROTECTED_API_URLS.CONFIGS}`, {
-			credentials: 'include',
-			headers: {
-				'Cookie': 'session_id=' + cookies.get('session_id')
-			}
-		});
+		const configs = await fetch(`${PROTECTED_API_URLS.CONFIGS}`);
 		if (!configs.ok) {
 			throw new Error(configs.statusText);
 		}

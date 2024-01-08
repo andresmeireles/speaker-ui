@@ -2,6 +2,16 @@ import { PUBLIC_APP_MODE, PUBLIC_LOGIN } from '$env/static/public';
 import { LOCAL_UNPROTECTED_URLS, PROTECTED_API_URLS, type User } from '$lib';
 import { redirect, type Handle } from '@sveltejs/kit';
 
+export const handleFetch = async ({ request, fetch, event }) => {
+	// add cookies to request
+	const sessionId = event.cookies.get('session_id');
+	if (sessionId) {
+		request.headers.set('Cookie', `session_id=${sessionId}`);
+	}
+
+	return await fetch(request);
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
 	if (PUBLIC_APP_MODE === 'production' || PUBLIC_LOGIN !== 'disabled') {
 		const sessionId = event.cookies.get('session_id');
