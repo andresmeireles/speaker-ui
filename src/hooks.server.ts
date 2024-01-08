@@ -23,7 +23,11 @@ export const handle: Handle = async ({ event, resolve }) => {
             return resolve(event);
         }
 		// add user data on event.locals
-		const userInfoRequest = await fetch(`${PROTECTED_API_URLS.USERS}/me`);
+		const userInfoRequest = await fetch(`${PROTECTED_API_URLS.USERS}/me`, {
+            headers: {
+                'Cookie': `session_id=${sessionId}`
+            }
+        });
 		if (!userInfoRequest.ok) {
 			event.cookies.delete('session_id');
 			throw redirect(302, '/login');
