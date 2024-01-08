@@ -1,6 +1,43 @@
 import { fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
-import { PROTECTED_API_URLS } from '$lib';
+import type { Actions, PageServerLoad } from './$types';
+import { PROTECTED_API_URLS, type ApiInvite, type Invite } from '$lib';
+
+
+export const load: PageServerLoad = async ({ fetch }) => {
+    try {
+        const invites = await fetch(PROTECTED_API_URLS.INVITES, {
+            credentials: 'include'
+        });
+        if (!invites.ok) {
+            return fail(400);
+        }
+
+        const apiInvitesJson: ApiInvite[] = await invites.json();
+        const invitesJson: Invite[] = apiInvitesJson.map((i: ApiInvite) => {
+            return {
+                id: i.id,
+                person: i.person,
+                theme: i.theme,
+                date: new Date(i.date),
+                time: i.time,
+                references: i.references,
+                accepted: i.accepted,
+                remembered: i.remembered
+            }
+        })
+
+        
+        return {
+            invites: invitesJson
+        }
+    } catch (e) {
+        return {
+            error: true,
+            message: 'Something went wrong',
+            e
+        };
+    }
+}
 
 export const actions = {
 	removeInvite: async ({ request, fetch }) => {

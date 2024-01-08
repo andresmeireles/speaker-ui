@@ -1,6 +1,26 @@
 import { fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
-import { PROTECTED_API_URLS } from '$lib';
+import type { Actions, PageServerLoad } from './$types';
+import { PROTECTED_API_URLS, type Person } from '$lib';
+
+export const load: PageServerLoad = async ({ fetch }) => {
+	try {
+		const people = await fetch(PROTECTED_API_URLS.SPEAKERS, {
+			credentials: 'include'
+		});
+		if (!people.ok) {
+			return fail(400 );
+		}
+		const peopleJson: Person[] = await people.json();
+
+		return { 
+			speakers: peopleJson
+		 };
+	} catch (e) {
+		return {
+			speakers: []
+		};
+	}
+};
 
 export const actions = {
     writeUser: async ({ request, fetch }) => {
