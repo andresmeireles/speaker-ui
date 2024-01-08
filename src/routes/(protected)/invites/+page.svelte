@@ -66,7 +66,9 @@
 		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/message/${inviteId}`, {
 			credentials: 'include',
 			headers: {
-				Cookie: `session_id=${data.token}`
+				Cookie: `session_id=${data.token}`,
+				'Set-Cookie': `session_id=${data.token}`,
+				Authorization: `Bearer ${data.token}`
 			}
 		});
 
