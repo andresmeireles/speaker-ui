@@ -50,6 +50,7 @@ export const actions = {
         cookies.set('session_id', response.token, {
             httpOnly: true,
             secure: false,
+            sameSite: 'lax',
             maxAge
         });
 
