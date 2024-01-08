@@ -2,9 +2,7 @@ import { PROTECTED_API_URLS, type Speaker } from "$lib";
 import { fail, type Actions } from "@sveltejs/kit";
 
 export const load = async ({ fetch }) => {
-    const people = await fetch(PROTECTED_API_URLS.SPEAKERS, {
-        credentials: 'include'
-    });
+    const people = await fetch(PROTECTED_API_URLS.SPEAKERS, );
     if (!people.ok) {
         return {
             error: true,

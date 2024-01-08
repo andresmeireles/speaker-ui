@@ -4,9 +4,7 @@ import { PROTECTED_API_URLS, type Person } from '$lib';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const people = await fetch(PROTECTED_API_URLS.SPEAKERS, {
-			credentials: 'include'
-		});
+		const people = await fetch(PROTECTED_API_URLS.SPEAKERS);
 		if (!people.ok) {
 			return fail(400 );
 		}

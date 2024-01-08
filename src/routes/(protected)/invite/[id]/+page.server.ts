@@ -1,5 +1,18 @@
-import { PROTECTED_API_URLS } from "$lib";
-import { fail, type Actions } from "@sveltejs/kit";
+import { PROTECTED_API_URLS, type ApiInvite } from "$lib";
+import { fail, type Actions, redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ params, fetch }) => {
+    const id = params.id;
+    const inviteRequest = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`);
+    if (!inviteRequest.ok) {
+        throw redirect(302, '/invites');
+    }
+    const invite: ApiInvite = await inviteRequest.json();
+    return {
+        invite
+    };
+}
 
 export const actions = {
     updateInvite: async ({ request, fetch, params }) => {

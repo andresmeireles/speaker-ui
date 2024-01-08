@@ -5,9 +5,7 @@ import { PROTECTED_API_URLS, type ApiInvite, type Invite } from '$lib';
 
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
-        const invites = await fetch(PROTECTED_API_URLS.INVITES, {
-            credentials: 'include'
-        });
+        const invites = await fetch(PROTECTED_API_URLS.INVITES);
         if (!invites.ok) {
             return fail(400);
         }
