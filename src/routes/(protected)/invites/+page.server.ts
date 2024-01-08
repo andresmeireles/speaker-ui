@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { PROTECTED_API_URLS, type ApiInvite, type Invite } from '$lib';
 
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, locals }) => {
     try {
         const invites = await fetch(PROTECTED_API_URLS.INVITES);
         if (!invites.ok) {
@@ -26,7 +26,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
         
         return {
-            invites: invitesJson
+            invites: invitesJson,
+			token: locals.token
         }
     } catch (e) {
         return {

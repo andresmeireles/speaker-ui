@@ -63,7 +63,12 @@
 		messageType: 'confirm' | 'remember'
 	) => {
 		event.preventDefault();
-		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/message/${inviteId}`);
+		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/message/${inviteId}`, {
+			credentials: 'include',
+			headers: {
+				Cookie: `session_id=${data.token}`
+			}
+		});
 
 		if (!req.ok) {
 			triggerToastMessage('Erro ao obter mensagem');
