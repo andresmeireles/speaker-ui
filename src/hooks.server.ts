@@ -3,16 +3,8 @@ import { LOCAL_UNPROTECTED_URLS, PROTECTED_API_URLS, UNPROTECTED_API_URLS, type 
 import { redirect, type Handle, type HandleFetch } from '@sveltejs/kit';
 
 export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
-	// add cookies to request
-	console.log(request.url)
 	if (request.url.startsWith(UNPROTECTED_API_URLS.LOGIN)) {
-		try {
-			const req = await fetch(request);
-			return req
-		} catch (e) {
-			console.log(e);
-			throw Error('Something went wrong');
-		}
+		return await fetch(request);
 	}
 	const sessionId = event.cookies.get('session_id');
 	if (sessionId) {

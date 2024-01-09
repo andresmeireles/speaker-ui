@@ -11,7 +11,6 @@ export const load: PageServerLoad = async ({ request, fetch, cookies }) => {
         }
     });
 	if (!r.ok) {
-		console.warn(await r.text());
 		throw redirect(302, request.referrer || '/');
 	}
 
