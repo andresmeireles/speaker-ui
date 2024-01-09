@@ -6,6 +6,7 @@
 	import type { ActionData } from '../$types';
 	import type { ActionData as UpdateActionData } from '../[id]/$types';
 	import { goto } from '$app/navigation';
+	import { triggerToastMessage } from '$lib/actions/toast';
 
 	export let people: Person[];
 	export let form: ActionData | UpdateActionData;
@@ -19,7 +20,7 @@
 	const maxDate = new Date(new Date().getFullYear() + 10, 0, 1);
 	let speaker: TypeAheadOption | null = null;
 	if (!isUpdate) {
-		const personId = form?.values?.personId;
+		const personId = (form as ActionData)?.values?.personId;
 		speaker = personId ? (people.find((p) => p.id === Number(personId)) as TypeAheadOption) : null;
 	}
 	let date = new Date(form?.values?.date ?? invite?.date ?? new Date()),
@@ -31,15 +32,15 @@
 
 	// state
 	$: speaker, showDatePicker;
-	$: if (form?.success || form?.updateSuccess) {
+	$: if ((form as ActionData)?.success || (form as UpdateActionData)?.updateSuccess) {
 		goto('/invites');
+	}
+	$: if (form?.reqFail) {
+		triggerToastMessage('Erro ao criar convite');
 	}
 </script>
 
 <form id="create-invite" action={`?/${action}`} method="POST" use:enhance>
-	{#if form?.reqFail}
-		<div class="text-4xl">Erro ao criar convite</div>
-	{/if}
 	<div class="flex justify-center">
 		<div class="w-full p-4 bg-gray-100 rounded-lg">
 			<div class="flex py-2 justify-between">

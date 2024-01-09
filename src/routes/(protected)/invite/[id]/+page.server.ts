@@ -22,22 +22,22 @@ export const actions = {
 		const theme = formData.get('theme')?.toString();
 		const time = formData.get('time')?.toString();
 		const references = formData.get('references')?.toString();
-		const updateValues = { id, date, theme, time, references };
+		const values = { id, date, theme, time, references };
 
 		if (date === null || date === undefined || date.trim().length === 0) {
-			return fail(400, { updateValues, noDate: true });
+			return fail(400, { values, noDate: true });
 		}
 
 		if (time === null || time === undefined || time.trim().length === 0) {
-			return fail(400, { updateValues, noTime: true });
+			return fail(400, { values, noTime: true });
 		}
 
 		if (theme === null || theme === undefined || theme.trim().length === 0) {
-			return fail(400, { updateValues, noTheme: true });
+			return fail(400, { values, noTheme: true });
 		}
 
 		if (references === null || references === undefined || references.trim().length === 0) {
-			return fail(400, { updateValues, noReferences: true });
+			return fail(400, { values, noReferences: true });
 		}
 
 		date = new Date(date).toISOString();
@@ -52,7 +52,7 @@ export const actions = {
 		});
 
 		if (!req.ok) {
-			return fail(400, { updateValues, reqFail: true });
+			return fail(400, { values, reqFail: true });
 		}
 
 		return { updateSuccess: true };

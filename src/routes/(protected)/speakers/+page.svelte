@@ -2,7 +2,7 @@
 	import RoundButton from '$lib/components/buttons/RoundButton.svelte';
 	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
-	import { triggerToastMessage } from '$lib/actions/toast';
+	import { triggerToastError, triggerToastMessage } from '$lib/actions/toast';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -17,36 +17,33 @@
 	$: editorId, form;
 	$: if (form?.updateFail) {
 		triggerToastMessage('erro ao atualizar', {
-			options: {
-				duration: 5000,
-				theme: {
-					'--toastBackground': '#48BB78',
-					'--toastProgressBackground': '#2F855A'
-				}
+			duration: 5000,
+			theme: {
+				'--toastBackground': '#48BB78',
+				'--toastProgressBackground': '#2F855A'
 			}
 		});
 	}
 	$: if (form?.cannotUpdate) {
 		triggerToastMessage('falha ao atualizar', {
-			options: {
-				duration: 5000,
-				theme: {
-					'--toastBackground': '#48BB78',
-					'--toastProgressBackground': '#2F855A'
-				}
+			duration: 5000,
+			theme: {
+				'--toastBackground': '#48BB78',
+				'--toastProgressBackground': '#2F855A'
 			}
 		});
 	}
 	$: if (form?.successfulyUpdated) {
 		triggerToastMessage('atualizado com sucesso', {
-			options: {
-				duration: 5000,
-				theme: {
-					'--toastBackground': '#48BB78',
-					'--toastProgressBackground': '#2F855A'
-				}
+			duration: 5000,
+			theme: {
+				'--toastBackground': '#48BB78',
+				'--toastProgressBackground': '#2F855A'
 			}
 		});
+	}
+	$: if (form?.removeFail) {
+		triggerToastError('erro ao remover');
 	}
 </script>
 
@@ -55,7 +52,7 @@
 		<h1 class="text-3xl">Pessoas</h1>
 	</div>
 	{#if form?.noSpeaker}
-		<p>É necessario preencher um nome</p>
+		<p>É necessário preencher um nome</p>
 	{/if}
 	{#if form?.success}
 		<p>Sucesso!</p>
@@ -101,9 +98,6 @@
 				</tr>
 			</thead>
 			<tbody class="bg-slate-100">
-				{#if form?.removeFail}
-					<p>Deu ruim demais</p>
-				{/if}
 				{#each data?.speakers ?? [] as speaker}
 					<tr>
 						<td class="border border-slate-200 text-center py-2">{speaker.name}</td>

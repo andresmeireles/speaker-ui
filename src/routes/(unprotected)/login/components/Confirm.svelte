@@ -19,6 +19,7 @@
 					placeholder="Adicionar código"
 					class="w-full p-2 mr-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
 					value={form?.values?.code ?? ''}
+					autocomplete="off"
 				/>
 				<label for="stay_connected">
 					<input type="checkbox" name="stay_connected" id="stay_connected" />Manter conectado</label
