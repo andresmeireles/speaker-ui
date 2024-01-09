@@ -36,13 +36,14 @@
 				i.date.getMonth() === today.getMonth() &&
 				i.date.getFullYear() === today.getFullYear()
 		) ?? [];
-	const displayDateNextWeek = dateFormatter(new Date(today.setDate(today.getDate() + 7)));
+	const nextWeek = new Date(today.setDate(today.getDate() + 7));
+	const displayDateNextWeek = dateFormatter(nextWeek);
 	const showOnNextWeek =
 		data.invites?.filter(
 			(i) =>
-				i.date.getDate() === today.getDate() + 7 &&
-				i.date.getMonth() === today.getMonth() &&
-				i.date.getFullYear() === today.getFullYear()
+				i.date.getDate() === nextWeek.getDate() &&
+				i.date.getMonth() === nextWeek.getMonth() &&
+				i.date.getFullYear() === nextWeek.getFullYear()
 		) ?? [];
 </script>
 

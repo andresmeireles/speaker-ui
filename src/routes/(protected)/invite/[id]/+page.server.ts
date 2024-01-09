@@ -1,21 +1,21 @@
 import { PROTECTED_API_URLS, type ApiInvite } from "$lib";
-import { fail, type Actions, redirect } from "@sveltejs/kit";
+import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
-    const id = params.id;
-    const inviteRequest = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`);
-    if (!inviteRequest.ok) {
-        throw redirect(302, '/invites');
-    }
-    const invite: ApiInvite = await inviteRequest.json();
-    return {
-        invite
-    };
+	const id = params.id;
+	const inviteRequest = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`);
+	if (!inviteRequest.ok) {
+		throw redirect(302, '/invites');
+	}
+	const invite: ApiInvite = await inviteRequest.json();
+	return {
+		invite
+	};
 }
 
 export const actions = {
-    updateInvite: async ({ request, fetch, params }) => {
+	updateInvite: async ({ request, fetch, params }) => {
 		const { id } = params
 		const formData = await request.formData();
 		let date = formData.get('date')?.toString();
@@ -41,6 +41,12 @@ export const actions = {
 		}
 
 		date = new Date(date).toISOString();
+		console.log({
+			date,
+			theme,
+			time: parseInt(time),
+			references
+		});
 		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`, {
 			method: 'PUT',
 			body: JSON.stringify({
