@@ -22,9 +22,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 		
         if (LOCAL_UNPROTECTED_URLS.includes(event.url.pathname)) {
-			return resolve(event);
+			throw redirect(302, '/');
         }
-		// add user data on event.locals
+
 		const userInfoRequest = await fetch(`${PROTECTED_API_URLS.USERS}/me`, {
             headers: {
                 'Cookie': `session_id=${sessionId}`
