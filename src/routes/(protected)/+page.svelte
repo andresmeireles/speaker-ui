@@ -1,4 +1,5 @@
 <script lang="ts">
+	/** TODO: André please, refactor this on future to be more clean, i know you are a backend guy, but you can do it! */
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -20,7 +21,6 @@
 	};
 
 	if (today.getDay() === 0) {
-		// jump 7 days
 		today.setDate(today.getDate() + 7);
 	}
 
@@ -28,18 +28,22 @@
 		today = jumpToSunday(today);
 	}
 
-	// format today as dd/mm/YYYY
 	const displayDate = dateFormatter(today);
-
-	let show =
+	const show =
 		data.invites?.filter(
 			(i) =>
 				i.date.getDate() === today.getDate() &&
 				i.date.getMonth() === today.getMonth() &&
 				i.date.getFullYear() === today.getFullYear()
 		) ?? [];
-
-	$: show;
+	const displayDateNextWeek = dateFormatter(new Date(today.setDate(today.getDate() + 7)));
+	const showOnNextWeek =
+		data.invites?.filter(
+			(i) =>
+				i.date.getDate() === today.getDate() + 7 &&
+				i.date.getMonth() === today.getMonth() &&
+				i.date.getFullYear() === today.getFullYear()
+		) ?? [];
 </script>
 
 <div>
@@ -51,7 +55,9 @@
 					<tr>
 						<th class="p-2 border border-slate-300">Nome</th>
 						<th class="p-2 border border-slate-300">Tema</th>
-						<th class="p-2 border border-slate-300">Data/Tempo</th>
+						<th class="p-2 border border-slate-300">Data / Tempo</th>
+						<th class="p-2 border border-slate-300">Aceito</th>
+						<th class="p-2 border border-slate-300">Relembrado</th>
 					</tr>
 				</thead>
 				<tbody class="bg-slate-100">
@@ -62,6 +68,37 @@
 							<td class="p-3 border border-slate-200 text-center"
 								>{dateFormatter(invite.date)} / {invite.time}</td
 							>
+							<td class="p-3 border border-slate-200">{invite.accepted ? 'Sim' : 'Nao'}</td>
+							<td class="p-3 border border-slate-200">{invite.remembered ? 'Sim' : 'Nao'}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="flex flex-col py-6 mt-8">
+		<h1 class="text-3xl">Convites do proximo domingo dia {displayDateNextWeek}</h1>
+		<div class="flex-col justify-start mt-8">
+			<table class="w-full">
+				<thead class="bg-slate-200">
+					<tr>
+						<th class="p-2 border border-slate-300">Nome</th>
+						<th class="p-2 border border-slate-300">Tema</th>
+						<th class="p-2 border border-slate-300">Data / Tempo</th>
+						<th class="p-2 border border-slate-300">Aceito</th>
+						<th class="p-2 border border-slate-300">Relembrado</th>
+					</tr>
+				</thead>
+				<tbody class="bg-slate-100">
+					{#each showOnNextWeek as invite}
+						<tr>
+							<td class="p-3 border border-slate-200">{invite.person.name}</td>
+							<td class="p-3 border border-slate-200">{invite.theme}</td>
+							<td class="p-3 border border-slate-200 text-center"
+								>{dateFormatter(invite.date)} / {invite.time}</td
+							>
+							<td class="p-3 border border-slate-200">{invite.accepted ? 'Sim' : 'Nao'}</td>
+							<td class="p-3 border border-slate-200">{invite.remembered ? 'Sim' : 'Nao'}</td>
 						</tr>
 					{/each}
 				</tbody>
