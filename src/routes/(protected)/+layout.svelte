@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
-	import type { LayoutData } from './$types';
+	import type { ActionData, LayoutData } from './$types';
 
 	export let data: LayoutData;
 </script>
@@ -14,7 +14,7 @@
 					{data.user.name}
 					<small>{data.user.email}</small>
 				</div>
-				<form method="post" action="?/logout" use:enhance>
+				<form method="get" action="/logout">
 					<button type="submit"><LogoutIcon /></button>
 				</form>
 			</div>

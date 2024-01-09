@@ -1,15 +1,25 @@
 import { PUBLIC_APP_MODE, PUBLIC_LOGIN } from '$env/static/public';
-import { LOCAL_UNPROTECTED_URLS, PROTECTED_API_URLS, type User } from '$lib';
-import { redirect, type Handle } from '@sveltejs/kit';
+import { LOCAL_UNPROTECTED_URLS, PROTECTED_API_URLS, UNPROTECTED_API_URLS, type User } from '$lib';
+import { redirect, type Handle, type HandleFetch } from '@sveltejs/kit';
 
-export const handleFetch = async ({ request, fetch, event }) => {
+export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
 	// add cookies to request
+	console.log(request.url)
+	if (request.url.startsWith(UNPROTECTED_API_URLS.LOGIN)) {
+		try {
+			const req = await fetch(request);
+			return req
+		} catch (e) {
+			console.log(e);
+			throw Error('Something went wrong');
+		}
+	}
 	const sessionId = event.cookies.get('session_id');
 	if (sessionId) {
 		request.headers.set('Cookie', `session_id=${sessionId}`);
 	}
 
-	return await fetch(request);
+	return fetch(request);
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -18,9 +28,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		if (!sessionId && !LOCAL_UNPROTECTED_URLS.includes(event.url.pathname)) {
 			throw redirect(302, '/login');
 		}
-
+		
         if (LOCAL_UNPROTECTED_URLS.includes(event.url.pathname)) {
-            return resolve(event);
+			return resolve(event);
         }
 		// add user data on event.locals
 		const userInfoRequest = await fetch(`${PROTECTED_API_URLS.USERS}/me`, {
@@ -36,6 +46,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.user = userInfo;
 		event.locals.token = sessionId!;
 	}
-
+	
 	return resolve(event);
 };

@@ -62,6 +62,8 @@ export const actions = {
 		const id = formData.get('id')?.toString();
 		const isInvite = formData.get('isInvite')?.toString() === 'true';
 
+		console.log(isInvite)
+
 		if (id === null || id === undefined || id.trim().length === 0) {
 			return fail(400, { id, noId: true });
 		}
