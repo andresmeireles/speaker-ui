@@ -47,8 +47,8 @@
 	}
 </script>
 
-<div>
-	<div class="flex justify-between py-4">
+<div class="w-full">
+	<div class="justify-between py-4">
 		<h1 class="text-3xl">Pessoas</h1>
 	</div>
 	{#if form?.noSpeaker}
@@ -89,19 +89,23 @@
 			>
 		</div>
 	</form>
-	<div>
-		<table class="w-full border-collapse table-auto">
-			<thead class="bg-slate-200">
+	<div class="w-full">
+		<table class="table-auto w-full">
+			<thead class="bg-slate-200 table-header-group">
 				<tr>
-					<th class="border border-slate-300 py-3">Nome</th>
-					<th class="border border-slate-300 py-3">Acao</th>
+					<th class="border border-slate-300 py-3 whitespace-normal">Nome</th>
+					<th class="border border-slate-300 py-3 whitespace-normal">Acao</th>
 				</tr>
 			</thead>
 			<tbody class="bg-slate-100">
 				{#each data?.speakers ?? [] as speaker}
 					<tr>
-						<td class="border border-slate-200 text-center py-2">{speaker.name}</td>
-						<td class="flex justify-center space-x-2 border border-slate-200 text-center py-2">
+						<td class="border border-slate-200 text-center py-2 whitespace-normal"
+							>{speaker.name}</td
+						>
+						<td
+							class="flex justify-center space-x-2 border border-slate-200 text-center py-2 whitespace-normal"
+						>
 							<form method="POST" action="?/removeUser">
 								<input type="hidden" name="speaker" value={speaker.id} />
 								<button class="bg-red-600 p-2 rounded-md text-white">Remover</button>

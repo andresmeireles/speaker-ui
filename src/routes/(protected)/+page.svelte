@@ -51,7 +51,7 @@
 	<div class="flex flex-col py-6">
 		<h1 class="text-3xl">Convites do domingo dia {displayDate}</h1>
 		<div class="flex-col justify-start mt-8">
-			<table class="w-full">
+			<table class="table-auto max-sm:hidden">
 				<thead class="bg-slate-200">
 					<tr>
 						<th class="p-2 border border-slate-300">Nome</th>
@@ -80,7 +80,7 @@
 	<div class="flex flex-col py-6 mt-8">
 		<h1 class="text-3xl">Convites do proximo domingo dia {displayDateNextWeek}</h1>
 		<div class="flex-col justify-start mt-8">
-			<table class="w-full">
+			<table class="table-auto max-sm:hidden">
 				<thead class="bg-slate-200">
 					<tr>
 						<th class="p-2 border border-slate-300">Nome</th>

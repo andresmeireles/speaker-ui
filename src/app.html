@@ -6,7 +6,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div class="flex h-screen bg-gray-100">%sveltekit.body%</div>
+	<body id="body" class="md:h-screen bg-slate-100" data-sveltekit-preload-data="hover">
+		<div style="display: contents">
+			%sveltekit.body%
+		</div>
 	</body>
 </html>

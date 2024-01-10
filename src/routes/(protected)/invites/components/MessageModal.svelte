@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { triggerToastMessage } from '$lib/actions/toast';
-	import { afterUpdate, createEventDispatcher, onMount } from 'svelte';
+	import { afterUpdate, createEventDispatcher, getContext, onMount, setContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
 	// external variables
 	export let dialog: HTMLDialogElement;
 	export let message: string;
 	export let openDialog: boolean;
 	export let inviteId: number;
-	export let isInvite: boolean;
 
 	// internal variables
 	let modalBodyRef: HTMLDivElement;
 	let formRef: HTMLFormElement;
+	const accept = getContext<Writable<boolean>>('accept');
+	const remember = getContext<Writable<boolean>>('remember');
+	const isInvite = getContext<Writable<boolean>>('isInvite');
 
 	// close event
 	const dispatch = createEventDispatcher();
@@ -44,9 +47,8 @@
 		dialog.addEventListener('click', handleClick);
 	});
 
-	const submitEvent = (event: Event) => {
-		event.preventDefault();
-		const canSubmit = confirm(`Deseja confirmar como ${isInvite ? 'convidado' : 'relembrado'}?`);
+	const submitEvent = () => {
+		const canSubmit = confirm(`Deseja confirmar como ${$isInvite ? 'convidado' : 'relembrado'}?`);
 
 		if (!canSubmit) return;
 
@@ -56,6 +58,14 @@
 	$: if (openDialog) dialog.showModal();
 	$: if (!openDialog && dialog !== undefined) dialog.close();
 	$: dispatch('close');
+	$: if ($accept) {
+		submitEvent();
+		accept.set(false);
+	}
+	$: if ($remember) {
+		submitEvent();
+		remember.set(false);
+	}
 </script>
 
 <dialog bind:this={dialog} class="bg-transparent">
@@ -71,16 +81,7 @@
 			<button class="bg-blue-500 rounded-md text-white py-1 px-3" on:click={copy}>copiar</button>
 			<form bind:this={formRef} method="post" action="?/trigger">
 				<input type="hidden" name="id" value={inviteId} />
-				<input type="hidden" name="isInvite" value={isInvite} />
-				{#if isInvite}
-					<button on:click={submitEvent} class="bg-green-500 rounded-md text-white py-1 px-3"
-						>confirmar</button
-					>
-				{:else}
-					<button on:click={submitEvent} class="bg-green-500 rounded-md text-white py-1 px-3"
-						>relembrar</button
-					>
-				{/if}
+				<input type="hidden" name="isInvite" value={$isInvite} />
 			</form>
 		</div>
 	</div>

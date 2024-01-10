@@ -71,7 +71,7 @@
 				type="text"
 			/>
 		</li>
-		<div class="absolute z-10 w-full">
+		<div class="absolute w-full">
 			{#each show as option, index}
 				<div
 					role="button"

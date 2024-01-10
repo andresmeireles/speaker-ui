@@ -17,6 +17,10 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
 export const handle: Handle = async ({ event, resolve }) => {
 	if (PUBLIC_APP_MODE === 'production' || PUBLIC_LOGIN !== 'disabled') {
 		const sessionId = event.cookies.get('session_id');
+		if (!sessionId && LOCAL_UNPROTECTED_URLS.includes(event.url.pathname)) {
+			return resolve(event);
+		}
+
 		if (!sessionId && !LOCAL_UNPROTECTED_URLS.includes(event.url.pathname)) {
 			throw redirect(302, '/login');
 		}
