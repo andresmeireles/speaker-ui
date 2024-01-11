@@ -38,7 +38,6 @@
 		}
 	}
 	$: if (!loading && !showMenu) {
-		console.log('!loading && !showMenu');
 		if (windowWidth < 768) {
 			document.getElementById('body')!.style.overflow = 'auto';
 		}

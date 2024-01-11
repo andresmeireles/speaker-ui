@@ -41,12 +41,6 @@ export const actions = {
 		}
 
 		date = new Date(date).toISOString();
-		console.log({
-			date,
-			theme,
-			time: parseInt(time),
-			references
-		});
 		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`, {
 			method: 'PUT',
 			body: JSON.stringify({

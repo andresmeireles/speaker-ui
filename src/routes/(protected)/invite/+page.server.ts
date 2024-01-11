@@ -2,21 +2,21 @@ import { PROTECTED_API_URLS, type Speaker } from "$lib";
 import { fail, type Actions } from "@sveltejs/kit";
 
 export const load = async ({ fetch }) => {
-    const people = await fetch(PROTECTED_API_URLS.SPEAKERS, );
-    if (!people.ok) {
-        return {
-            error: true,
-            message: 'Something went wrong',
-        }
-    }
+	const people = await fetch(PROTECTED_API_URLS.SPEAKERS,);
+	if (!people.ok) {
+		return {
+			error: true,
+			message: 'Something went wrong',
+		}
+	}
     
-    const peopleJson: Speaker[] = await people.json();
+	const peopleJson: Speaker[] = await people.json();
 
-    return { people: peopleJson };
+	return { people: peopleJson };
 }
 
 export const actions = {
-    createInvite: async ({ request, fetch }) => {
+	createInvite: async ({ request, fetch }) => {
 		const formData = await request.formData();
 		const personId = formData.get('person_id')?.toString();
 		let date = formData.get('date')?.toString();

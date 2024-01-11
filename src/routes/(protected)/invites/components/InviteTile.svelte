@@ -7,8 +7,6 @@
 	export let invite: Invite;
 	export let active: number;
 
-	console.log(invite);
-
 	const activeInvite = getContext<Writable<number>>('activeInvite');
 	const modal = getContext<Writable<boolean>>('modal');
 	const messageType = getContext<Writable<'confirm' | 'remember'>>('messageType');

@@ -5,7 +5,7 @@ import {
 	MINUTES_PER_HOUR,
 	SECONDS_PER_MINUTE
 } from '$lib/interfaces/dates';
-import { fail, type Actions, redirect } from '@sveltejs/kit';
+import { fail, redirect, type Actions } from '@sveltejs/kit';
 
 export const actions = {
 	login: async ({ request, fetch }) => {

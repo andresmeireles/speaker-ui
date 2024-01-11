@@ -1,19 +1,17 @@
 <script lang="ts">
-	import type { Invite, Person, TypeAheadOption } from '$lib';
-	import { DatePicker } from 'date-picker-svelte';
-	import TypeAhead from './TypeAhead.svelte';
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import type { Invite, Person, TypeAheadOption } from '$lib';
+	import { triggerToastError, triggerToastMessage } from '$lib/actions/toast';
+	import { DatePicker } from 'date-picker-svelte';
 	import type { ActionData } from '../$types';
 	import type { ActionData as UpdateActionData } from '../[id]/$types';
-	import { goto } from '$app/navigation';
-	import { triggerToastMessage } from '$lib/actions/toast';
+	import TypeAhead from './TypeAhead.svelte';
 
 	export let people: Person[];
 	export let form: ActionData | UpdateActionData;
 	export let invite: Invite | null = null;
 
-	const formInsert = form as ActionData;
-	const formUpdate = form as UpdateActionData;
 	const isUpdate = invite !== null;
 	const action = isUpdate ? 'updateInvite' : 'createInvite';
 	const buttonLabel = isUpdate ? 'Atualizar convite' : 'Criar convite';
@@ -22,7 +20,7 @@
 	const maxDate = new Date(new Date().getFullYear() + 10, 0, 1);
 	let speaker: TypeAheadOption | null = null;
 	if (!isUpdate) {
-		const personId = formInsert?.values?.personId;
+		const personId = (form as ActionData)?.values?.personId;
 		speaker = personId ? (people.find((p) => p.id === Number(personId)) as TypeAheadOption) : null;
 	}
 	let date = new Date(form?.values?.date ?? invite?.date ?? new Date()),
@@ -34,11 +32,14 @@
 
 	// state
 	$: speaker, showDatePicker;
-	$: if (formInsert?.success || formUpdate?.updateSuccess) {
+	$: if ((form as ActionData)?.success || (form as UpdateActionData)?.updateSuccess) {
 		goto('/invites');
 	}
 	$: if (form?.reqFail) {
 		triggerToastMessage('Erro ao criar convite');
+	}
+	$: if ((form as ActionData)?.reqFail || (form as UpdateActionData)?.reqFail) {
+		triggerToastError('falha no convite');
 	}
 </script>
 
@@ -60,7 +61,7 @@
 								speaker = s.detail.speaker;
 							}}
 						/>
-						{#if formInsert?.noSpeaker}
+						{#if form?.noSpeaker}
 							<p class="text-red-500">Selecione um orador</p>
 						{/if}
 						<input type="hidden" name="person_id" value={speaker?.id ?? ''} />
