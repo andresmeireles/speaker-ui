@@ -1,7 +1,7 @@
 import { PROTECTED_API_URLS, type ApiInvite } from "$lib";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, locals }) => {
     const invitesRequest = await fetch(PROTECTED_API_URLS.INVITES);
     if (!invitesRequest.ok) {
         return {
@@ -25,6 +25,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
     })
     
     return {
-        invites
+        invites,
+        token: locals.token
     }
 }

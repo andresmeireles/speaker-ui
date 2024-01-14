@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import MessageModal from './components/MessageModal.svelte';
+	import MessageModal from '$lib/components/invite/MessageModal.svelte';
 	import { PROTECTED_API_URLS } from '$lib';
 	import { triggerToastMessage } from '$lib/actions/toast';
-	import InviteTile from './components/InviteTile.svelte';
+	import InviteTile from '$lib/components/InviteTile.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 
@@ -111,7 +111,7 @@
 	<div class="flex items-center justify-between py-6">
 		<h1 class="text-3xl">Convites active</h1>
 		<div>
-			<a href="/invite" class="bg-green-600 text-gray-100 px-4 py-2 rounded">Novo</a>
+			<a href="/invite" class="rounded bg-green-600 px-4 py-2 text-gray-100">Novo</a>
 		</div>
 	</div>
 	<div class="w-full">

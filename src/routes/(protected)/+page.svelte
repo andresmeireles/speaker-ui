@@ -1,9 +1,15 @@
 <script lang="ts">
-	/** TODO: André please, refactor this on future to be more clean, i know you are a backend guy, but you can do it! */
+	// TODO: fazer todos os botoes funcionarem
 	import type { PageData } from './$types';
+	import Tile from '$lib/components/invite/Tile.svelte';
+	import InviteMessage from '$lib/components/invite/InviteMessage.svelte';
+	import { PROTECTED_API_URLS } from '$lib';
 
 	export let data: PageData;
+
 	let today = new Date();
+	let message = '';
+	let showModal = false;
 
 	const dateFormatter = (date: Date): string => {
 		const dd = String(date.getDate()).padStart(2, '0');
@@ -45,65 +51,46 @@
 				i.date.getMonth() === nextWeek.getMonth() &&
 				i.date.getFullYear() === nextWeek.getFullYear()
 		) ?? [];
+
+	const triggerMessage = async (type: 'confirm' | 'remember', inviteId: number) => {
+		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/message/${inviteId}`, {
+			credentials: 'include',
+			headers: {
+				Authorization: `Bearer ${data.token}`
+			}
+		});
+
+		if (!req.ok) {
+			return;
+		}
+
+		const res = await req.json();
+		const msg = type === 'confirm' ? res.invite : res.remember;
+		message = msg;
+
+		showModal = true;
+	};
+
+	$: message, showModal;
 </script>
+
+<InviteMessage bind:openDialog={showModal} {message} />
 
 <div>
 	<div class="flex flex-col py-6">
 		<h1 class="text-3xl">Convites do domingo dia {displayDate}</h1>
-		<div class="flex-col justify-start mt-8">
-			<table class="table-auto max-sm:hidden">
-				<thead class="bg-slate-200">
-					<tr>
-						<th class="p-2 border border-slate-300">Nome</th>
-						<th class="p-2 border border-slate-300">Tema</th>
-						<th class="p-2 border border-slate-300">Data / Tempo</th>
-						<th class="p-2 border border-slate-300">Aceito</th>
-						<th class="p-2 border border-slate-300">Relembrado</th>
-					</tr>
-				</thead>
-				<tbody class="bg-slate-100">
-					{#each show as invite}
-						<tr>
-							<td class="p-3 border border-slate-200">{invite.person.name}</td>
-							<td class="p-3 border border-slate-200">{invite.theme}</td>
-							<td class="p-3 border border-slate-200 text-center"
-								>{dateFormatter(invite.date)} / {invite.time}</td
-							>
-							<td class="p-3 border border-slate-200">{invite.accepted ? 'Sim' : 'Nao'}</td>
-							<td class="p-3 border border-slate-200">{invite.remembered ? 'Sim' : 'Nao'}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
+		<div class="mt-8 flex-col justify-start">
+			{#each show as i}
+				<Tile invite={i} showTextOnDialog={triggerMessage} />
+			{/each}
 		</div>
 	</div>
-	<div class="flex flex-col py-6 mt-8">
+	<div class="mt-8 flex flex-col py-6">
 		<h1 class="text-3xl">Convites do proximo domingo dia {displayDateNextWeek}</h1>
-		<div class="flex-col justify-start mt-8">
-			<table class="table-auto max-sm:hidden">
-				<thead class="bg-slate-200">
-					<tr>
-						<th class="p-2 border border-slate-300">Nome</th>
-						<th class="p-2 border border-slate-300">Tema</th>
-						<th class="p-2 border border-slate-300">Data / Tempo</th>
-						<th class="p-2 border border-slate-300">Aceito</th>
-						<th class="p-2 border border-slate-300">Relembrado</th>
-					</tr>
-				</thead>
-				<tbody class="bg-slate-100">
-					{#each showOnNextWeek as invite}
-						<tr>
-							<td class="p-3 border border-slate-200">{invite.person.name}</td>
-							<td class="p-3 border border-slate-200">{invite.theme}</td>
-							<td class="p-3 border border-slate-200 text-center"
-								>{dateFormatter(invite.date)} / {invite.time}</td
-							>
-							<td class="p-3 border border-slate-200">{invite.accepted ? 'Sim' : 'Nao'}</td>
-							<td class="p-3 border border-slate-200">{invite.remembered ? 'Sim' : 'Nao'}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
+		<div class="mt-8 flex-col justify-start">
+			{#each showOnNextWeek as i}
+				<Tile invite={i} showTextOnDialog={triggerMessage} />
+			{/each}
 		</div>
 	</div>
 </div>
