@@ -3,6 +3,7 @@
 	import type { ApiInvite, Invite } from '$lib';
 	import { afterUpdate } from 'svelte';
 	import MenuIcon from '../icons/MenuIcon.svelte';
+	import CloseIcon from '../icons/CloseIcon.svelte';
 
 	export let invite: Invite | ApiInvite;
 	export let showTextOnDialog: (type: 'confirm' | 'remember', inviteId: number) => void;
@@ -82,17 +83,15 @@
 			<small class="block">{displayInvite.date.toLocaleDateString('pt-BR')} / {invite.time}</small>
 			<small class="font-bold">{meta.status}</small>
 		</div>
-		<span class="self-center">
-			<button on:click={toggle} class="rounded border border-blue-600 md:hidden">
-				<MenuIcon size={2} />
-			</button>
-			<button on:click={toggle} class="rounded border border-blue-600 max-sm:hidden">
-				<MenuIcon size={2} />
+		<span class="self-center" class:hidden={invite.remembered && invite.accepted}>
+			<button on:click={toggle}>
+				<i class:hidden={!isOpen}><CloseIcon size={3} /></i>
+				<i class:hidden={isOpen}><MenuIcon size={3} /></i>
 			</button>
 		</span>
 	</div>
 	<div
-		class=" flex transform flex-col transition-transform duration-500 md:absolute md:right-[1%] md:-mt-[2%] md:w-40 md:rounded md:bg-slate-300 md:p-1"
+		class=" flex transform flex-col transition-transform duration-500 md:absolute md:right-[1%] md:-mt-[1%] md:w-40 md:rounded md:bg-slate-300 md:p-1"
 		class:hidden={!isOpen}
 	>
 		{#if !invite.remembered}

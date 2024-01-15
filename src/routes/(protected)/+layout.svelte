@@ -4,6 +4,13 @@
 	import type { LayoutData } from './$types';
 	import { setContext } from 'svelte';
 
+	const menus = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Pessoas', href: '/speakers' },
+		{ name: 'Convites', href: '/invites' },
+		{ name: 'Templates', href: '/templates' }
+	];
+
 	const showMenu = writable<boolean>(true);
 	const navIsOutOfViewport = writable<boolean>(false);
 	setContext('showMenu', showMenu);
@@ -28,12 +35,12 @@
 <svelte:window bind:innerWidth />
 
 {#if loading}
-	class:fixed={!$showMenu}
+	<!-- class:fixed={!$showMenu}
 	class:h-full={!$showMenu}
-	<p>carregando</p>
+	<p>carregando</p> -->
 {:else}
-	<Navbar {data} />
-	<div class="flex">
+	<Navbar {data} {menus} />
+	<div class="flex md:flex-grow">
 		<div
 			id="leftsidebar"
 			class="flex-grow bg-blue-400 p-5 text-white transition-all duration-500 ease-linear max-sm:hidden"
@@ -43,7 +50,9 @@
 			class:w-48={$showMenu}
 		>
 			<div class="sticky top-[10%] whitespace-nowrap transition-all duration-700 ease-linear">
-				{data.user.name} + Big Name
+				{#each menus as menu}
+					<a href={menu.href} class="block p-2">{menu.name}</a>
+				{/each}
 			</div>
 		</div>
 		<div id="content" class="w-full px-3 transition-transform duration-500 ease-linear">
