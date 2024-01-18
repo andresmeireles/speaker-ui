@@ -1,30 +1,33 @@
 <script lang="ts">
 	import type { TypeAheadOption } from '$lib';
-	import { afterUpdate, createEventDispatcher, onMount } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 
-	// internal variables
-	let searchTerm = '';
-	let show: TypeAheadOption[] = [];
-	let optionsContainerRef: HTMLDivElement | null = null;
-	let showOptions = true;
-	let selectedOption: TypeAheadOption | null = null;
-	const dispatch = createEventDispatcher();
-
-	// export values
+	// revamp
 	let placeholderText: string | null = null;
 	export { placeholderText as placeholder };
 	export let options: TypeAheadOption[] = [];
+	export let selectedOption: TypeAheadOption | null = null;
+	export let personId: number;
+
+	// internal variables
+	let searchTerm = selectedOption?.name ?? '';
+	let show: TypeAheadOption[] = [];
+	let optionsContainerRef: HTMLDivElement | null = null;
+	let showOptions = !(searchTerm !== '');
+
 	/**
 	 * Number of characters to start searching
 	 */
 	export let searchBeginWith: number = 0;
 
 	const select = (id: number) => {
+		console.log(id);
 		const selected = options.find((option) => option.id === id);
 		if (selected) {
 			selectedOption = selected;
 			searchTerm = selected.name;
 			showOptions = false;
+			personId = selected.id;
 			// how remove focus from input
 			optionsContainerRef?.blur();
 			return;
@@ -32,8 +35,8 @@
 	};
 
 	// state
-	$: dispatch('speakerChange', { speaker: selectedOption });
 	$: show,
+		personId,
 		(show = options.filter(
 			(option) =>
 				showOptions &&
@@ -82,7 +85,7 @@
 						}
 					}}
 					on:click={() => select(option.id)}
-					class="cursor-pointer p-2 w-full bg-slate-200 hover:bg-slate-300 {index ===
+					class="w-full cursor-pointer bg-slate-200 p-2 hover:bg-slate-300 {index ===
 					options.length - 1
 						? 'rounded-b-lg'
 						: ''} {option.id === selectedOption?.id ? 'bg-slate-300' : ''}"

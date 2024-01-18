@@ -1,8 +1,8 @@
-import { PROTECTED_API_URLS, type ApiInvite } from "$lib";
+import { PROTECTED_API_URLS, type ApiInvite, triggerToastMessage } from "$lib";
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ params, fetch }) => {
+export const load: PageServerLoad = async ({ params, fetch , request}) => {
 	const id = params.id;
 	const inviteRequest = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`);
 	if (!inviteRequest.ok) {
@@ -10,7 +10,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 	}
 	const invite: ApiInvite = await inviteRequest.json();
 	return {
-		invite
+		invite,
+		referer: request.headers.get('referer')
 	};
 }
 
@@ -22,6 +23,7 @@ export const actions = {
 		const theme = formData.get('theme')?.toString();
 		const time = formData.get('time')?.toString();
 		const references = formData.get('references')?.toString();
+		const referer = formData.get('referer')?.toString() ?? '';
 		const values = { id, date, theme, time, references };
 
 		if (date === null || date === undefined || date.trim().length === 0) {
@@ -55,6 +57,14 @@ export const actions = {
 			return fail(400, { values, reqFail: true });
 		}
 
-		return { updateSuccess: true };
+		triggerToastMessage('Convite atualizado com sucesso');
+
+		let redirectPath = '/invites';
+
+		if (referer.trim().length > 0 && referer !== request.url) {
+			redirectPath = referer;
+		}
+
+		throw redirect(303, redirectPath);
 	}
 } satisfies Actions

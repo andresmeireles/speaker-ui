@@ -81,7 +81,7 @@
 		<h1 class="text-3xl">Convites do domingo dia {displayDate}</h1>
 		<div class="mt-8 flex-col justify-start">
 			{#each show as i}
-				<Tile invite={i} showTextOnDialog={triggerMessage} />
+				<Tile invite={i} showTextOnDialog={triggerMessage} httpClient={fetch} />
 			{/each}
 		</div>
 	</div>
@@ -89,7 +89,7 @@
 		<h1 class="text-3xl">Convites do proximo domingo dia {displayDateNextWeek}</h1>
 		<div class="mt-8 flex-col justify-start">
 			{#each showOnNextWeek as i}
-				<Tile invite={i} showTextOnDialog={triggerMessage} />
+				<Tile invite={i} showTextOnDialog={triggerMessage} httpClient={fetch} />
 			{/each}
 		</div>
 	</div>

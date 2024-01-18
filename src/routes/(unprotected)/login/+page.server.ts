@@ -31,8 +31,8 @@ export const actions = {
 		const formData = await request.formData();
 		const code = formData.get('code')?.toString();
 		const email = formData.get('email')?.toString();
-		const stayConnected = formData.get('stay_connected')?.toString() === 'on' ?? false;
-		const values = { code, email, stayConnected };
+		const remember = formData.get('remember')?.toString() === 'on' ?? false;
+		const values = { code, email, remember };
 
 		if (code?.trim().length === 0) {
 			return fail(400, { values, message: 'Code cannot be empty', error: true });
@@ -42,15 +42,16 @@ export const actions = {
 			method: 'POST',
 			body: JSON.stringify({
 				code,
-				email
+				email,
+				remember
 			})
 		});
 		if (!req.ok) {
 			return fail(400, { values, message: await req.text(), error: true });
 		}
 
-		const maxAge = stayConnected
-			? SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_WEEK
+		const maxAge = remember
+			? SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY * DAYS_PER_WEEK * 2
 			: undefined;
 		const response = await req.json();
 		cookies.set('session_id', response.token, {

@@ -4,19 +4,21 @@
 	import type { LayoutData } from './$types';
 	import { setContext } from 'svelte';
 
+	export let data: LayoutData;
+
 	const menus = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Pessoas', href: '/speakers' },
 		{ name: 'Convites', href: '/invites' },
-		{ name: 'Templates', href: '/templates' }
+		{ name: 'Templates', href: '/templates' },
+		{ name: 'Estatísticas', href: '/statistics' }
 	];
 
 	const showMenu = writable<boolean>(true);
 	const navIsOutOfViewport = writable<boolean>(false);
 	setContext('showMenu', showMenu);
 	setContext('navIsOutOfViewport', navIsOutOfViewport);
-
-	export let data: LayoutData;
+	setContext('token', data.token);
 
 	let loading = true;
 	let innerWidth: number;

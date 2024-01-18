@@ -1,7 +1,8 @@
 import { PROTECTED_API_URLS, type Speaker } from "$lib";
 import { fail, type Actions } from "@sveltejs/kit";
 
-export const load = async ({ fetch }) => {
+export const load = async ({ fetch, url }) => {
+	const id = url.searchParams.get('id');
 	const people = await fetch(PROTECTED_API_URLS.SPEAKERS,);
 	if (!people.ok) {
 		return {
@@ -12,10 +13,23 @@ export const load = async ({ fetch }) => {
     
 	const peopleJson: Speaker[] = await people.json();
 
-	return { people: peopleJson };
+	return { people: peopleJson, id };
 }
 
 export const actions = {
+	accept: async ({ fetch, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id')?.toString() ?? '0';
+		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/accept/${id}`, {
+			method: 'PUT',
+		});
+		if (!req.ok) {
+			return fail(400, { id, confirmReqFail: true });
+		}
+		return {
+			acceptSuccess: true
+		}
+	},
 	createInvite: async ({ request, fetch }) => {
 		const formData = await request.formData();
 		const personId = formData.get('person_id')?.toString();

@@ -1,1 +1,1 @@
-export { triggerToastMessage } from './toast'
+export { triggerToastMessage, triggerToastError } from './toast'

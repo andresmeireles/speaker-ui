@@ -1,15 +1,19 @@
 <script lang="ts">
-	// TODO: when not is mobile make it appears a dropdown
+	import { enhance } from '$app/forms';
 	import type { ApiInvite, Invite } from '$lib';
 	import { afterUpdate } from 'svelte';
 	import MenuIcon from '../icons/MenuIcon.svelte';
 	import CloseIcon from '../icons/CloseIcon.svelte';
+	import { getContext } from 'svelte';
 
 	export let invite: Invite | ApiInvite;
 	export let showTextOnDialog: (type: 'confirm' | 'remember', inviteId: number) => void;
+	export let httpClient: HTTPClient;
+	export let canRemove = false;
 
 	let isOpen = false;
 	let menuOptions: HTMLElement;
+	const token = getContext('token');
 
 	if ('person_id' in invite) {
 		invite = {
@@ -55,18 +59,22 @@
 	};
 
 	let meta = tileMeta();
-
 	const triggerInviteMessage = () => {
+		close();
 		showTextOnDialog('confirm', invite.id);
 	};
 	const triggerRememberMessage = () => {
+		close();
 		showTextOnDialog('remember', invite.id);
+	};
+
+	const close = () => {
+		isOpen = false;
 	};
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (isOpen && menuOptions && !menuOptions.contains(event.target as Node)) {
-			console.log('click outside');
-			isOpen = false;
+			close();
 		}
 	};
 
@@ -83,7 +91,7 @@
 			<small class="block">{displayInvite.date.toLocaleDateString('pt-BR')} / {invite.time}</small>
 			<small class="font-bold">{meta.status}</small>
 		</div>
-		<span class="self-center" class:hidden={invite.remembered && invite.accepted}>
+		<span class="self-center" class:hidden={invite.remembered && invite.accepted && !canRemove}>
 			<button on:click={toggle}>
 				<i class:hidden={!isOpen}><CloseIcon size={3} /></i>
 				<i class:hidden={isOpen}><MenuIcon size={3} /></i>
@@ -106,11 +114,14 @@
 				class="mb-1 w-full rounded border border-slate-400 bg-blue-200 p-1 text-start text-sm"
 				>Convidar</button
 			>
-			<button
-				on:click={triggerInviteMessage}
-				class="w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
-				>Confirmar</button
-			>
+			<form action="/invite?/accept" method="POST">
+				<input type="hidden" name="id" value={invite.id} />
+				<button
+					on:click={close}
+					class="mb-1 w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
+					>Confirmar</button
+				>
+			</form>
 		{/if}
 		{#if !invite.remembered && invite.accepted}
 			<button
@@ -118,8 +129,14 @@
 				class="mb-1 w-full rounded border border-slate-400 bg-blue-200 p-1 text-start text-sm"
 				>Lembrar</button
 			>
-			<button class="w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
+			<button
+				class="mb-1 w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
 				>Confirmar</button
+			>
+		{/if}
+		{#if canRemove}
+			<button class="w-full rounded border border-slate-400 bg-red-200 p-1 text-start text-sm"
+				>Remover</button
 			>
 		{/if}
 	</div>
