@@ -23,7 +23,7 @@
 			const rect = navRef.getBoundingClientRect();
 			const navHeight = contentRef.offsetHeight * -1;
 
-			const isOut = rect.top < navHeight - 10;
+			const isOut = rect.top < navHeight - 60;
 			isOutOfViewport.set(isOut);
 		};
 
