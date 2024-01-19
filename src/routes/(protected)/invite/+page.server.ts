@@ -24,10 +24,23 @@ export const actions = {
 			method: 'PUT',
 		});
 		if (!req.ok) {
-			return fail(400, { id, confirmReqFail: true });
+			return fail(400, { id, fail: true });
 		}
 		return {
-			acceptSuccess: true
+			success: true
+		}
+	},
+	remember: async ({ fetch, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id')?.toString() ?? '0';
+		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/remember/${id}`, {
+			method: 'PUT',
+		});
+		if (!req.ok) {
+			return fail(400, { id, fail: true });
+		}
+		return {
+			success: true
 		}
 	},
 	createInvite: async ({ request, fetch }) => {

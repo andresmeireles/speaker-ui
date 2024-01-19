@@ -7,6 +7,7 @@
 	export let speaker: Speaker;
 
 	let cardRef: HTMLDivElement;
+	let optionsRef: HTMLDivElement;
 	let showOptions = false;
 
 	$: showOptions;
@@ -35,8 +36,20 @@
 			<i class:hidden={!showOptions}><CloseIcon size={3} /></i>
 		</button>
 	</div>
-	<div>
-		<div class="flex flex-col space-y-1">
+	<div
+		bind:this={optionsRef}
+		class="z-0 w-full transition-all duration-300 ease-in-out"
+		class:-translate-y-full={!showOptions}
+		class:translate-y-0={showOptions}
+		class:opacity-0={!showOptions}
+		class:opacity-100={showOptions}
+	>
+		<div
+			class="flex flex-col space-y-1 transition-[height] duration-300 ease-linear"
+			class:-z-10={!showOptions}
+			class:h-0={!showOptions}
+			class:h-32={showOptions}
+		>
 			<a
 				href="/invite?id={speaker.id}"
 				class="w-full rounded-lg border border-green-500 bg-green-300 p-2 text-center"

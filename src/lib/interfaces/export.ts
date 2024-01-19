@@ -6,3 +6,4 @@ export type { Invite } from './invites';
 export type { ApiInvite } from './invites';
 export type { User } from './user';
 export type { ToastOptions } from "./toast"
+export type { Meta } from "./meta"

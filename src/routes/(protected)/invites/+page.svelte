@@ -61,7 +61,7 @@
 	<div class="w-full">
 		{#each invites ?? [] as invite}
 			<!-- <InviteTile {invite} active={$activeInvite} /> -->
-			<Tile {invite} showTextOnDialog={showMessage} httpClient={fetch} canRemove={true} />
+			<Tile {invite} showTextOnDialog={showMessage} canRemove={true} />
 		{/each}
 	</div>
 </div>
