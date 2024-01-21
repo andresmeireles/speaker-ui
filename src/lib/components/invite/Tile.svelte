@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import {
+		triggerToastError,
 		triggerToastMessage,
 		type ApiInvite,
 		type Invite,
-		triggerToastError,
-		type Meta
+		type Meta,
+		InviteStatus
 	} from '$lib';
-	import { afterUpdate } from 'svelte';
-	import MenuIcon from '../icons/MenuIcon.svelte';
-	import CloseIcon from '../icons/CloseIcon.svelte';
 	import type { ActionResult } from '@sveltejs/kit';
+	import { afterUpdate } from 'svelte';
+	import CloseIcon from '../icons/CloseIcon.svelte';
+	import MenuIcon from '../icons/MenuIcon.svelte';
+	import { MetaDefinition } from './meta_definition';
+	import InviteForm from '../../../routes/(protected)/invite/components/InviteForm.svelte';
 
 	export let invite: Invite | ApiInvite;
 	export let showTextOnDialog: (type: 'confirm' | 'remember', inviteId: number) => void;
@@ -32,31 +35,33 @@
 	const toggle = () => (isOpen = !isOpen);
 
 	const tileMeta = (): Meta => {
-		const meta = { color: '', status: '' };
-
-		if (invite.accepted && invite.remembered) {
-			meta['color'] = 'bg-green-500';
-			meta['status'] = 'relembrado';
-
-			return meta;
+		switch (invite.status) {
+			case InviteStatus.CONFIRMED:
+				return MetaDefinition.confirmed();
+			case InviteStatus.REMEMBERED:
+				return MetaDefinition.remembered();
+			case InviteStatus.WAIT_REMEMBER:
+				return MetaDefinition.waitingRemember();
+			case InviteStatus.DONE:
+				return MetaDefinition.done();
+			case InviteStatus.NOT_DONE:
+				return MetaDefinition.notDone();
+			case InviteStatus.REJECTED:
+				return MetaDefinition.rejected();
+			default:
+				return MetaDefinition.waitingConfirmation();
 		}
-
-		if (invite.accepted) {
-			meta['color'] = 'bg-green-500/20';
-			meta['status'] = 'aceito';
-
-			return meta;
-		}
-
-		meta['color'] = 'bg-yellow-300/20';
-		meta['status'] = 'pendente';
-
-		return meta;
 	};
 
 	let meta = tileMeta();
+	let canShow: boolean;
 
 	$: invite, meta;
+	$: canShow =
+		!(
+			invite.status in
+			[InviteStatus.DONE, InviteStatus.NOT_DONE, InviteStatus.REJECTED, InviteStatus.REMEMBERED]
+		) && !canRemove;
 
 	const triggerInviteMessage = () => {
 		close();
@@ -92,7 +97,7 @@
 		return async ({ result }: { result: ActionResult }) => {
 			if (result.type === 'success') {
 				triggerToastMessage('Convite aceito');
-				invite.accepted = true;
+				invite.status = InviteStatus.CONFIRMED;
 				meta = tileMeta();
 				return;
 			}
@@ -105,7 +110,7 @@
 		return async ({ result }: { result: ActionResult }) => {
 			if (result.type === 'success') {
 				triggerToastMessage('Convite relembrado');
-				invite.remembered = true;
+				invite.status = InviteStatus.REMEMBERED;
 				meta = tileMeta();
 				return;
 			}
@@ -135,9 +140,9 @@
 			<span class="block font-bold">{invite.person.name}</span>
 			<small class="block">{invite.theme}</small>
 			<small class="block">{displayInvite.date.toLocaleDateString('pt-BR')} / {invite.time}</small>
-			<small class="font-bold">{meta.status}</small>
+			<small class="font-bold">{meta.label}</small>
 		</div>
-		<span class="self-center" class:hidden={invite.remembered && invite.accepted && !canRemove}>
+		<span class="self-center" class:hidden={canShow}>
 			<button on:click={toggle}>
 				<i class:hidden={!isOpen}><CloseIcon size={3} /></i>
 				<i class:hidden={isOpen}><MenuIcon size={3} /></i>
@@ -148,13 +153,11 @@
 		class=" flex transform flex-col transition-transform duration-500 md:absolute md:right-[1%] md:-mt-[1%] md:w-40 md:rounded md:bg-slate-300 md:p-1"
 		class:hidden={!isOpen}
 	>
-		{#if !invite.remembered}
+		{#if invite.status === InviteStatus.WAIT_CONFIRMATION}
 			<a
 				href="/invite/{invite.id}"
 				class="mb-1 w-full rounded border border-slate-400 bg-yellow-200 p-1 text-sm">Editar</a
 			>
-		{/if}
-		{#if !invite.accepted}
 			<button
 				on:click={triggerInviteMessage}
 				class="mb-1 w-full rounded border border-slate-400 bg-blue-200 p-1 text-start text-sm"
@@ -174,7 +177,7 @@
 				>
 			</form>
 		{/if}
-		{#if !invite.remembered && invite.accepted}
+		{#if invite.status in [InviteStatus.CONFIRMED, InviteStatus.WAIT_CONFIRMATION]}
 			<button
 				on:click={triggerRememberMessage}
 				class="mb-1 w-full rounded border border-slate-400 bg-blue-200 p-1 text-start text-sm"
