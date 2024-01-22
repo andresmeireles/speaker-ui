@@ -19,8 +19,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
             date: new Date(i.date),
             time: i.time,
             references: i.references,
-            accepted: i.accepted,
-            remembered: i.remembered
+            status: i.status
         }
     })
     

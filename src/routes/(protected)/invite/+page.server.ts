@@ -1,6 +1,8 @@
 import { PROTECTED_API_URLS, type Speaker } from "$lib";
 import { fail, type Actions } from "@sveltejs/kit";
 
+type FETCH = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>
+
 export const load = async ({ fetch, url }) => {
 	const id = url.searchParams.get('id');
 	const people = await fetch(PROTECTED_API_URLS.SPEAKERS,);
@@ -17,28 +19,19 @@ export const load = async ({ fetch, url }) => {
 }
 
 export const actions = {
-	accept: async ({ fetch, request }) => {
+	accept: async ({ fetch, request }) => updateInvite({ fetch, request, path: `${PROTECTED_API_URLS.INVITES}/accept` }),
+	remember: async ({ fetch, request }) => updateInvite({ fetch, request, path: `${PROTECTED_API_URLS.INVITES}/remember` }),
+	remove: async ({ fetch, request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id')?.toString() ?? '0';
-		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/accept/${id}`, {
-			method: 'PUT',
+		const id = formData.get('id')?.toString();
+		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/${id}`, {
+			method: 'DELETE'
 		});
+		
 		if (!req.ok) {
-			return fail(400, { id, fail: true });
+			return fail(400, { id, reqFail: true });
 		}
-		return {
-			success: true
-		}
-	},
-	remember: async ({ fetch, request }) => {
-		const formData = await request.formData();
-		const id = formData.get('id')?.toString() ?? '0';
-		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/remember/${id}`, {
-			method: 'PUT',
-		});
-		if (!req.ok) {
-			return fail(400, { id, fail: true });
-		}
+
 		return {
 			success: true
 		}
@@ -88,3 +81,17 @@ export const actions = {
 		return { success: true };
 	}
 } satisfies Actions
+
+const updateInvite = async ({ request, fetch, path }: { request: Request; fetch: FETCH, path: string }) => {
+	const formData = await request.formData();
+		const id = formData.get('id')?.toString() ?? '0';
+		const req = await fetch(path + "/" + id, {
+			method: 'PUT',
+		});
+		if (!req.ok) {
+			return fail(400, { id, fail: true });
+		}
+		return {
+			success: true
+		}
+}

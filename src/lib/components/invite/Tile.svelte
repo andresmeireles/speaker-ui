@@ -1,19 +1,18 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import {
+		InviteStatus,
 		triggerToastError,
 		triggerToastMessage,
 		type ApiInvite,
 		type Invite,
-		type Meta,
-		InviteStatus
+		type Meta
 	} from '$lib';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { afterUpdate } from 'svelte';
 	import CloseIcon from '../icons/CloseIcon.svelte';
 	import MenuIcon from '../icons/MenuIcon.svelte';
 	import { MetaDefinition } from './meta_definition';
-	import InviteForm from '../../../routes/(protected)/invite/components/InviteForm.svelte';
 
 	export let invite: Invite | ApiInvite;
 	export let showTextOnDialog: (type: 'confirm' | 'remember', inviteId: number) => void;
@@ -30,6 +29,8 @@
 			date: new Date(invite.date)
 		};
 	}
+
+	console.log(invite);
 
 	const displayInvite = invite;
 	const toggle = () => (isOpen = !isOpen);
@@ -153,7 +154,7 @@
 		class=" flex transform flex-col transition-transform duration-500 md:absolute md:right-[1%] md:-mt-[1%] md:w-40 md:rounded md:bg-slate-300 md:p-1"
 		class:hidden={!isOpen}
 	>
-		{#if invite.status === InviteStatus.WAIT_CONFIRMATION}
+		{#if invite.status === InviteStatus.WAIT_CONFIRMATION.valueOf()}
 			<a
 				href="/invite/{invite.id}"
 				class="mb-1 w-full rounded border border-slate-400 bg-yellow-200 p-1 text-sm">Editar</a
@@ -177,7 +178,7 @@
 				>
 			</form>
 		{/if}
-		{#if invite.status in [InviteStatus.CONFIRMED, InviteStatus.WAIT_CONFIRMATION]}
+		{#if [InviteStatus.CONFIRMED, InviteStatus.WAIT_REMEMBER].includes(invite.status)}
 			<button
 				on:click={triggerRememberMessage}
 				class="mb-1 w-full rounded border border-slate-400 bg-blue-200 p-1 text-start text-sm"
@@ -198,9 +199,11 @@
 			</form>
 		{/if}
 		{#if canRemove}
-			<button class="w-full rounded border border-slate-400 bg-red-200 p-1 text-start text-sm"
-				>Remover</button
-			>
+			<form action="/invite?/remove" method="POST">
+				<button class="w-full rounded border border-slate-400 bg-red-200 p-1 text-start text-sm"
+					>Remover</button
+				>
+			</form>
 		{/if}
 	</div>
 </div>

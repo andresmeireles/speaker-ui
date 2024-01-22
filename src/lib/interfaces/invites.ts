@@ -18,7 +18,7 @@ export interface ApiInvite {
     date: string
     time: number
     references: string
-    status: InviteStatus
+    status: number
 }
 
 export enum InviteStatus {
