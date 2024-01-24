@@ -51,16 +51,13 @@
 			class:w-0={!$showMenu}
 			class:w-48={$showMenu}
 		>
-			<div
-				class:sticky={$navIsOutOfViewport}
-				class="top-[10%] whitespace-nowrap transition-all duration-700 ease-linear"
-			>
+			<div class="sticky top-[10%] whitespace-nowrap transition-all duration-700 ease-linear">
 				{#each menus as menu}
 					<a href={menu.href} class="block p-2">{menu.name}</a>
 				{/each}
 			</div>
 		</div>
-		<div id="content" class="w-full px-3 transition-transform duration-500 ease-linear">
+		<div id="content" class="w-full px-3 py-20 transition-transform duration-500 ease-linear">
 			<slot />
 		</div>
 	</div>

@@ -5,14 +5,14 @@
 		triggerToastError,
 		triggerToastMessage,
 		type ApiInvite,
-		type Invite,
-		type Meta
+		type Invite
 	} from '$lib';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { afterUpdate } from 'svelte';
 	import CloseIcon from '../icons/CloseIcon.svelte';
 	import MenuIcon from '../icons/MenuIcon.svelte';
 	import { MetaDefinition } from './meta_definition';
+	import WasDoneModal from './WasDoneModal.svelte';
 
 	export let invite: Invite | ApiInvite;
 	export let showTextOnDialog: (type: 'confirm' | 'remember', inviteId: number) => void;
@@ -20,8 +20,13 @@
 
 	let isOpen = false;
 	let menuOptions: HTMLElement;
-	let updateFormRef: HTMLFormElement;
+	let rememberFormRef: HTMLFormElement;
 	let inviteFormRef: HTMLFormElement;
+	let rejectFormRef: HTMLFormElement;
+	let removeFormRef: HTMLFormElement;
+	let meta = MetaDefinition.getMeta(invite.status);
+	let canShow: boolean;
+	let showWasDoneModal: boolean = false;
 
 	if ('person_id' in invite) {
 		invite = {
@@ -30,32 +35,8 @@
 		};
 	}
 
-	console.log(invite);
-
 	const displayInvite = invite;
 	const toggle = () => (isOpen = !isOpen);
-
-	const tileMeta = (): Meta => {
-		switch (invite.status) {
-			case InviteStatus.CONFIRMED:
-				return MetaDefinition.confirmed();
-			case InviteStatus.REMEMBERED:
-				return MetaDefinition.remembered();
-			case InviteStatus.WAIT_REMEMBER:
-				return MetaDefinition.waitingRemember();
-			case InviteStatus.DONE:
-				return MetaDefinition.done();
-			case InviteStatus.NOT_DONE:
-				return MetaDefinition.notDone();
-			case InviteStatus.REJECTED:
-				return MetaDefinition.rejected();
-			default:
-				return MetaDefinition.waitingConfirmation();
-		}
-	};
-
-	let meta = tileMeta();
-	let canShow: boolean;
 
 	$: invite, meta;
 	$: canShow =
@@ -74,49 +55,31 @@
 		showTextOnDialog('remember', invite.id);
 	};
 
-	const triggerConfirmForm = (event: MouseEvent) => {
+	const canExecute = (event: MouseEvent, ref: HTMLFormElement, message: string) => {
 		event.preventDefault();
-		const canProceed = confirm('Deseja confirmar o convite?');
-		if (!canProceed) {
-			return;
-		}
-
-		inviteFormRef.requestSubmit();
-		close();
-	};
-
-	const triggerUpdateForm = (event: MouseEvent) => {
-		event.preventDefault();
-		const canProceed = confirm('Foi relembrado?');
+		const canProceed = confirm(message);
 		if (!canProceed) return;
 
-		updateFormRef.requestSubmit();
+		ref.requestSubmit();
 		close();
 	};
 
-	const inviteAction = () => {
+	const action = (props: {
+		successMessage: string;
+		status: InviteStatus;
+		errorMessage?: string;
+	}) => {
+		const { successMessage, status, errorMessage } = props;
 		return async ({ result }: { result: ActionResult }) => {
 			if (result.type === 'success') {
-				triggerToastMessage('Convite aceito');
-				invite.status = InviteStatus.CONFIRMED;
-				meta = tileMeta();
+				triggerToastMessage(successMessage);
+				invite.status = status;
+				meta = MetaDefinition.getMeta(invite.status);
+
 				return;
 			}
 
-			triggerToastError('Ocorreu um erro ao aceitar o convite');
-		};
-	};
-
-	const rememberAction = () => {
-		return async ({ result }: { result: ActionResult }) => {
-			if (result.type === 'success') {
-				triggerToastMessage('Convite relembrado');
-				invite.status = InviteStatus.REMEMBERED;
-				meta = tileMeta();
-				return;
-			}
-
-			triggerToastError('Ocorreu um erro ao relembrar o convite');
+			triggerToastError(errorMessage ?? 'Ocorreu um erro na operação');
 		};
 	};
 
@@ -135,6 +98,8 @@
 	});
 </script>
 
+<WasDoneModal bind:show={showWasDoneModal} {invite} />
+
 <div bind:this={menuOptions} class="my-2 rounded border px-2 py-1 {meta.color}">
 	<div class="flex justify-between">
 		<div>
@@ -151,7 +116,7 @@
 		</span>
 	</div>
 	<div
-		class=" flex transform flex-col transition-transform duration-500 md:absolute md:right-[1%] md:-mt-[1%] md:w-40 md:rounded md:bg-slate-300 md:p-1"
+		class="flex transform flex-col transition-transform duration-500 md:absolute md:right-[1%] md:-mt-[1%] md:w-40 md:rounded md:bg-slate-300 md:p-1"
 		class:hidden={!isOpen}
 	>
 		{#if invite.status === InviteStatus.WAIT_CONFIRMATION.valueOf()}
@@ -168,13 +133,28 @@
 				bind:this={inviteFormRef}
 				action="/invite?/accept"
 				method="POST"
-				use:enhance={inviteAction}
+				use:enhance={() =>
+					action({ successMessage: 'Convite aceito', status: InviteStatus.CONFIRMED })}
 			>
 				<input type="hidden" name="id" value={invite.id} />
 				<button
-					on:click={triggerConfirmForm}
+					on:click={(event) => canExecute(event, inviteFormRef, 'Aceitar convite?')}
 					class="mb-1 w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
 					>Confirmar</button
+				>
+			</form>
+			<form
+				bind:this={rejectFormRef}
+				action="/invite?/reject"
+				method="POST"
+				use:enhance={() =>
+					action({ successMessage: 'Convite negado', status: InviteStatus.REJECTED })}
+			>
+				<input type="hidden" name="id" value={invite.id} />
+				<button
+					on:click={(event) => canExecute(event, rejectFormRef, 'Negar convite?')}
+					class="mb-1 w-full rounded border border-slate-400 bg-orange-200 p-1 text-start text-sm"
+					>Negar</button
 				>
 			</form>
 		{/if}
@@ -185,22 +165,32 @@
 				>Lembrar</button
 			>
 			<form
-				bind:this={updateFormRef}
+				bind:this={rememberFormRef}
 				method="POST"
-				use:enhance={rememberAction}
+				use:enhance={() => action({ successMessage: 'Lembrado', status: InviteStatus.REMEMBERED })}
 				action="/invite?/remember"
 			>
 				<input type="hidden" name="id" value={invite.id} />
 				<button
-					on:click={triggerUpdateForm}
+					on:click={(event) => canExecute(event, rememberFormRef, 'Lembrar convite?')}
 					class="mb-1 w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
 					>Relembrar</button
 				>
 			</form>
 		{/if}
+		{#if invite.status === InviteStatus.REMEMBERED}
+			<button
+				on:click={() => (showWasDoneModal = true)}
+				class="mb-1 w-full rounded border border-slate-400 bg-green-200 p-1 text-start text-sm"
+				>Finalizar</button
+			>
+		{/if}
 		{#if canRemove}
-			<form action="/invite?/remove" method="POST">
-				<button class="w-full rounded border border-slate-400 bg-red-200 p-1 text-start text-sm"
+			<form bind:this={removeFormRef} action="/invite?/remove" method="POST">
+				<input type="hidden" name="id" value={invite.id} />
+				<button
+					on:click={(event) => canExecute(event, removeFormRef, 'Remover convite?')}
+					class="w-full rounded border border-slate-400 bg-red-200 p-1 text-start text-sm"
 					>Remover</button
 				>
 			</form>

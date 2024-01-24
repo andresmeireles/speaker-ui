@@ -1,4 +1,4 @@
-import type { Meta } from "$lib";
+import { InviteStatus, type Meta } from "$lib";
 
 export class MetaDefinition {
 	public static waitingConfirmation(): Meta {
@@ -38,7 +38,7 @@ export class MetaDefinition {
 
 	public static notDone(): Meta {
 		return {
-			color: "bg-slate-200",
+			color: "bg-orange-200",
 			label: "Not done"
 		}
 	}
@@ -47,6 +47,25 @@ export class MetaDefinition {
 		return {
 			color: "bg-green-200",
 			label: "Done"
+		}
+	}
+
+	public static getMeta(status: number): Meta {
+		switch (status) {
+			case InviteStatus.CONFIRMED:
+				return MetaDefinition.confirmed();
+			case InviteStatus.REMEMBERED:
+				return MetaDefinition.remembered();
+			case InviteStatus.WAIT_REMEMBER:
+				return MetaDefinition.waitingRemember();
+			case InviteStatus.DONE:
+				return MetaDefinition.done();
+			case InviteStatus.NOT_DONE:
+				return MetaDefinition.notDone();
+			case InviteStatus.REJECTED:
+				return MetaDefinition.rejected();
+			default:
+				return MetaDefinition.waitingConfirmation();
 		}
 	}
 }

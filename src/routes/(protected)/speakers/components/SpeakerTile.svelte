@@ -38,7 +38,8 @@
 	</div>
 	<div
 		bind:this={optionsRef}
-		class="z-0 w-full transition-all duration-300 ease-in-out"
+		class="relative w-full transition-all duration-300 ease-linear"
+		class:-z-10={!showOptions}
 		class:-translate-y-full={!showOptions}
 		class:translate-y-0={showOptions}
 		class:opacity-0={!showOptions}
@@ -46,9 +47,10 @@
 	>
 		<div
 			class="flex flex-col space-y-1 transition-[height] duration-300 ease-linear"
-			class:-z-10={!showOptions}
 			class:h-0={!showOptions}
 			class:h-32={showOptions}
+			class:scale-0={!showOptions}
+			class:scale-1={showOptions}
 		>
 			<a
 				href="/invite?id={speaker.id}"

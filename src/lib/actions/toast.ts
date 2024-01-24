@@ -22,3 +22,13 @@ export const triggerToastError = (message: string, duration = 5000) => {
 		}
 	});
 };
+
+export const triggerToastWarning = (message: string, duration = 5000) => {
+	triggerToastMessage(message, {
+		duration: duration,
+		theme: {
+			'--toastBackground': '#E3CAB1',
+			'--toastProgressBackground': '#FFCCCC',
+		}
+	});
+};
