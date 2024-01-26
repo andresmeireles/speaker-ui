@@ -40,10 +40,8 @@
 
 	$: invite, meta;
 	$: canShow =
-		!(
-			invite.status in
-			[InviteStatus.DONE, InviteStatus.NOT_DONE, InviteStatus.REJECTED, InviteStatus.REMEMBERED]
-		) && !canRemove;
+		[InviteStatus.DONE, InviteStatus.NOT_DONE, InviteStatus.REJECTED].includes(invite.status) &&
+		!canRemove;
 
 	const triggerInviteMessage = () => {
 		close();

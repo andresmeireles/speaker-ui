@@ -7,4 +7,4 @@ export type { Speaker } from './speaker';
 export type { ToastOptions } from "./toast";
 export type { TypeAheadOption } from './typeahead_option';
 export type { User } from './user';
-
+export type { Stats } from './stats';
