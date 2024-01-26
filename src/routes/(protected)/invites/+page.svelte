@@ -1,14 +1,13 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import MessageModal from '$lib/components/invite/MessageModal.svelte';
+	import InviteMessage from '$lib/components/invite/InviteMessage.svelte';
 	import { PROTECTED_API_URLS } from '$lib';
 	import { triggerToastMessage } from '$lib/actions/toast';
-	import InviteTile from '$lib/components/InviteTile.svelte';
+	import Tile from '$lib/components/invite/Tile.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 
 	export let data: PageData;
-	export let form: ActionData;
 
 	// show invites
 	let showOutdatedInvites = false;
@@ -24,35 +23,8 @@
 	// message variables
 	let showMessageModal = false;
 	let message = '';
-	let messageDialogRef: HTMLDialogElement;
 
-	const executeRemove = (event: Event, id: string) => {
-		event.preventDefault();
-		const canExecute = confirm('Deseja realmente remover o convite?');
-
-		if (!canExecute) return;
-
-		const form = document.getElementById(id) as HTMLFormElement;
-		form.submit();
-	};
-
-	if (form?.inviteRemoved) {
-		triggerToastMessage('Convite removido com sucesso!');
-	}
-
-	if (form?.inviteConfirmed) {
-		triggerToastMessage(form?.requestResponseMessage);
-	}
-
-	if (form?.confirmReqFail) {
-		triggerToastMessage('Erro ao confirmar convite');
-	}
-
-	if (form?.noId) {
-		triggerToastMessage('ID inválido');
-	}
-
-	const showMessage = async (inviteId: number, messageType: 'confirm' | 'remember') => {
+	const showMessage = async (messageType: 'confirm' | 'remember', inviteId: number) => {
 		const req = await fetch(`${PROTECTED_API_URLS.INVITES}/message/${inviteId}`, {
 			credentials: 'include',
 			headers: {
@@ -74,38 +46,10 @@
 		return {};
 	};
 
-	const handleMessageModalClose = () => {
-		showMessageModal = false;
-	};
-
-	const activeInvite = writable(0);
-	const modal = writable(false);
-	const messageType: Writable<'confirm' | 'remember'> = writable('confirm');
-	const accept = writable(false);
-	const remember = writable(false);
-	const isInvite = writable(true);
-	setContext('activeInvite', activeInvite);
-	setContext('modal', modal);
-	setContext('messageType', messageType);
-	setContext('accept', accept);
-	setContext('remember', remember);
-	setContext('isInvite', isInvite);
-
 	$: showMessageModal, message, invites, showOutdatedInvites;
-	$: if ($modal) {
-		showMessage($activeInvite, $messageType);
-		modal.set(false);
-		activeInvite.set(0);
-	}
 </script>
 
-<MessageModal
-	on:close={handleMessageModalClose}
-	dialog={messageDialogRef}
-	{message}
-	openDialog={showMessageModal}
-	inviteId={$activeInvite}
-/>
+<InviteMessage bind:openDialog={showMessageModal} {message} />
 
 <div class="w-full">
 	<div class="flex items-center justify-between py-6">
@@ -116,7 +60,8 @@
 	</div>
 	<div class="w-full">
 		{#each invites ?? [] as invite}
-			<InviteTile {invite} active={$activeInvite} />
+			<!-- <InviteTile {invite} active={$activeInvite} /> -->
+			<Tile {invite} showTextOnDialog={showMessage} canRemove={true} />
 		{/each}
 	</div>
 </div>

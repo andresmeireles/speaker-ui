@@ -6,6 +6,7 @@ export const PROTECTED_API_URLS = {
     INVITES: `${PUBLIC_API_URL}/invites`,
     USERS: `${PUBLIC_API_URL}/users`,
     LOGOUT: `${PUBLIC_API_URL}/logout`,
+    STATS: `${PUBLIC_API_URL}/stats`,
 }
 
 export const UNPROTECTED_API_URLS = {

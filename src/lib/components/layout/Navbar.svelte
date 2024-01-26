@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { User } from '$lib';
-	import { onMount, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import LogoutIcon from '../icons/LogoutIcon.svelte';
 	import MenuIcon from '../icons/MenuIcon.svelte';
@@ -11,31 +11,11 @@
 
 	let navRef: HTMLElement;
 	let contentRef: HTMLElement;
-	const isOutOfViewport = getContext<Writable<boolean>>('navIsOutOfViewport');
 	const showMenu = getContext<Writable<boolean>>('showMenu');
 
 	const toggle = () => {
 		showMenu.set(!$showMenu);
 	};
-
-	onMount(() => {
-		const checkViewport = () => {
-			const rect = navRef.getBoundingClientRect();
-			const navHeight = contentRef.offsetHeight * -1;
-
-			const isOut = rect.top < navHeight - 10;
-			isOutOfViewport.set(isOut);
-		};
-
-		checkViewport();
-		window.addEventListener('scroll', checkViewport);
-		window.addEventListener('resize', checkViewport);
-
-		return () => {
-			window.removeEventListener('scroll', checkViewport);
-			window.removeEventListener('resize', checkViewport);
-		};
-	});
 </script>
 
 <div
@@ -73,7 +53,8 @@
 </div>
 
 <span bind:this={navRef}></span>
-<nav bind:this={contentRef} class="z-10 w-full bg-blue-200 p-3" class:fixed={$isOutOfViewport}>
+<!-- navbar -->
+<nav bind:this={contentRef} class="fixed z-10 w-full bg-blue-200 p-3">
 	<div class="flex justify-between">
 		<div>
 			<div class="flex gap-2">

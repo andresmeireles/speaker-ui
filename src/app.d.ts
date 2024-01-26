@@ -10,3 +10,5 @@ declare namespace App {
 		template: string;
 	}
 }
+
+type HTTPClient = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>

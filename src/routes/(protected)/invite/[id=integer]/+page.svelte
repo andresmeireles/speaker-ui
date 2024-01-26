@@ -11,4 +11,4 @@
 	};
 </script>
 
-<InviteForm people={[]} {form} {invite} />
+<InviteForm people={[]} {form} {invite} referer={data.referer ?? ''} />

@@ -7,8 +7,7 @@ export interface Invite {
     date: Date
     time: number
     references: string
-    accepted: boolean
-    remembered: boolean
+    status: number
 }
 
 export interface ApiInvite {
@@ -19,6 +18,15 @@ export interface ApiInvite {
     date: string
     time: number
     references: string
-    accepted: boolean
-    remembered: boolean
+    status: number
+}
+
+export enum InviteStatus {
+    WAIT_CONFIRMATION = 0,
+    CONFIRMED = 1,
+    REJECTED = 2,
+    WAIT_REMEMBER = 3,
+    REMEMBERED = 4,
+    DONE = 5,
+    NOT_DONE = 6
 }
