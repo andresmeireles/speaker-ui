@@ -2,6 +2,7 @@
 	import type { ApiInvite, Invite } from '$lib';
 	import { afterUpdate, onMount } from 'svelte';
 	import CloseIcon from '../icons/CloseIcon.svelte';
+	import { enhance } from '$app/forms';
 
 	export let show: boolean;
 	export let invite: Invite | ApiInvite;
@@ -27,6 +28,14 @@
 	$: if (show && dialog) {
 		dialog.showModal();
 	}
+
+	const done = () => {
+		return async ({ result }) => {
+			if (result.type === 'success') {
+				location.reload();
+			}
+		};
+	};
 </script>
 
 <dialog bind:this={dialog} class="w-10/12 rounded">
@@ -38,12 +47,12 @@
 		</div>
 		<div class="py-4">O discurso foi feito?</div>
 		<div class="flex justify-end gap-3">
-			<form action="/invite?/done" method="POST">
+			<form action="/invite?/done" method="POST" use:enhance={done}>
 				<input type="hidden" name="id" value={invite.id} />
 				<input type="hidden" name="was-done" value={true} />
 				<button class="rounded bg-green-500 px-3 py-1 font-bold text-white">Sim</button>
 			</form>
-			<form action="/invite?/done" method="POST">
+			<form action="/invite?/done" method="POST" use:enhance={done}>
 				<input type="hidden" name="id" value={invite.id} />
 				<input type="hidden" name="was-done" value={false} />
 				<button class="rounded bg-red-500 px-3 py-1 font-bold text-white">Não</button>
