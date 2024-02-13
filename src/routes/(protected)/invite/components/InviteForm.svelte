@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { Invite, Person, TypeAheadOption } from '$lib';
 	import { triggerToastError, triggerToastMessage } from '$lib/actions/toast';
@@ -48,10 +48,21 @@
 			themeRef.focus();
 		}
 	});
+
+	const enhanceHandler = ({ formElement, formData, action, cancel, submitter }) => {
+		return async ({ result }) => {
+			if (result.type === 'redirect') {
+				goto(result.location);
+				return;
+			}
+
+			await applyAction(result);
+		};
+	};
 </script>
 
 <div class="w-full">
-	<form id="create-invite" action={`?/${action}`} method="POST" use:enhance>
+	<form id="create-invite" action={`?/${action}`} method="POST" use:enhance={enhanceHandler}>
 		<input type="hidden" name="referer" value={referer} />
 		<div class="flex justify-center">
 			<div class="w-full rounded-lg bg-gray-100 p-4">

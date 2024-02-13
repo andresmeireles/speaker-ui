@@ -1,5 +1,5 @@
 import { PROTECTED_API_URLS, type Speaker } from "$lib";
-import { fail, type Actions } from "@sveltejs/kit";
+import { fail, type Actions, redirect } from "@sveltejs/kit";
 
 type FETCH = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>
 
@@ -58,6 +58,7 @@ export const actions = {
 		}
 
 		return {
+			type: "success",
 			success: true
 		}
 	},
@@ -103,7 +104,7 @@ export const actions = {
 			return fail(400, { values, reqFail: true });
 		}
 
-		return { success: true };
+		throw redirect(302, '/invites');
 	}
 } satisfies Actions
 

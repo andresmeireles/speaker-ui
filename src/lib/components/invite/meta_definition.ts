@@ -10,7 +10,7 @@ export class MetaDefinition {
 
 	public static confirmed(): Meta {
 		return {
-			color: "bg-green-200",
+			color: "bg-amber-200",
 			label: "Confirmed"
 		}
 	}
