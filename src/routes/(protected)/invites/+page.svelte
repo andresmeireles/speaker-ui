@@ -1,24 +1,29 @@
 <script lang="ts">
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 	import InviteMessage from '$lib/components/invite/InviteMessage.svelte';
-	import { PROTECTED_API_URLS } from '$lib';
+	import { PROTECTED_API_URLS, type Invite } from '$lib';
 	import { triggerToastMessage } from '$lib/actions/toast';
 	import Tile from '$lib/components/invite/Tile.svelte';
-	import { writable, type Writable } from 'svelte/store';
-	import { setContext } from 'svelte';
 
 	export let data: PageData;
 
 	// show invites
 	let showOutdatedInvites = false;
-	let invites = data.invites?.filter((invite) => {
-		// filter outdated invites
-		if (showOutdatedInvites) {
-			return invite;
-		}
+	const filterInvites = (invites: Invite[]) => {
+		return invites.filter((invite) => {
+			if (showOutdatedInvites) {
+				return true;
+			}
 
-		return new Date() <= invite.date;
-	});
+			// date minus one day
+			const date = new Date();
+			date.setDate(date.getDate() - 1);
+
+			return date <= invite.date;
+		});
+	};
+
+	let invites = filterInvites(data.invites ?? []);
 
 	// message variables
 	let showMessageModal = false;
@@ -46,7 +51,13 @@
 		return {};
 	};
 
-	$: showMessageModal, message, invites, showOutdatedInvites;
+	$: showMessageModal, message, invites;
+	$: if (showOutdatedInvites) {
+		invites = filterInvites(data.invites ?? []);
+	}
+	$: if (!showOutdatedInvites) {
+		invites = filterInvites(data.invites ?? []);
+	}
 </script>
 
 <InviteMessage bind:openDialog={showMessageModal} {message} />
@@ -54,7 +65,12 @@
 <div class="w-full">
 	<div class="flex items-center justify-between py-6">
 		<h1 class="text-3xl">Convites active</h1>
-		<div>
+		<div class="flex items-center gap-2">
+			<div>
+				<label>
+					<input type="checkbox" bind:checked={showOutdatedInvites} /> Mostrar convites passados
+				</label>
+			</div>
 			<a href="/invite" class="rounded bg-green-600 px-4 py-2 text-gray-100">Novo</a>
 		</div>
 	</div>

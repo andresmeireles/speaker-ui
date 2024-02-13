@@ -94,6 +94,16 @@
 	afterUpdate(() => {
 		document.addEventListener('click', handleClickOutside);
 	});
+
+	const formatDate = (date: Date) => {
+		let day: string | number = date.getDate();
+		day = day < 10 ? '0' + day : day;
+		let month: string | number = date.getMonth() + 1;
+		month = month < 10 ? '0' + month : month;
+		const year = date.getFullYear();
+
+		return `${day}/${month}/${year}`;
+	};
 </script>
 
 <WasDoneModal bind:show={showWasDoneModal} {invite} />
@@ -103,7 +113,7 @@
 		<div>
 			<span class="block font-bold">{invite.person.name}</span>
 			<small class="block">{invite.theme}</small>
-			<small class="block">{displayInvite.date.toLocaleDateString('pt-BR')} / {invite.time}</small>
+			<small class="block">{formatDate(displayInvite.date)} / {invite.time}</small>
 			<small class="font-bold">{meta.label}</small>
 		</div>
 		<span class="self-center" class:hidden={canShow}>
