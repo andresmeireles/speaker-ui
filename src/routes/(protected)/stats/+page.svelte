@@ -20,9 +20,16 @@
 			<div class="flex justify-between gap-2 rounded bg-green-200 p-4">
 				<div class="flex flex-[8] justify-between self-center">
 					<span>{stat.speaker.name}</span>
-					<div>
-						<span>Total de discursos em {year}:</span>
-						<span class="font-bold">{stat.speaks}</span>
+					<div class="flex gap-1">
+						<div>
+							<span>Realizados em {year}:</span>
+							<span class="font-bold">{stat.doneSpeaks}</span>
+						</div>
+						<span>|</span>
+						<div>
+							<span>Convites em {year}:</span>
+							<span class="font-bold">{stat.totalSpeaks}</span>
+						</div>
 					</div>
 				</div>
 				<div class="flex-[2] text-center">
