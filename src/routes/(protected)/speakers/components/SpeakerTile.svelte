@@ -53,6 +53,10 @@
 			class:scale-1={showOptions}
 		>
 			<a
+				href="/speaker/{speaker.id}"
+				class="w-full rounded-lg border border-amber-500 bg-amber-300 p-2 text-center">editar</a
+			>
+			<a
 				href="/invite?id={speaker.id}"
 				class="w-full rounded-lg border border-green-500 bg-green-300 p-2 text-center"
 				>criar convite</a
@@ -62,7 +66,8 @@
 				class="w-full rounded-lg border border-blue-600 bg-blue-400 p-2 text-center text-white"
 				>ver estatísticas</a
 			>
-			<form action="">
+			<form action="/speakers?/removeUser" method="POST">
+				<input type="hidden" name="speaker" value={speaker.id} />
 				<button class="w-full rounded-lg border border-slate-900 bg-red-500 p-2 text-white"
 					>remover</button
 				>
