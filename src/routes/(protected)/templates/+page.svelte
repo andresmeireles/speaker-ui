@@ -13,8 +13,15 @@
 	Sucesso!
 {/if}
 <form method="POST">
+	<label for="forms">Formulários cadastrados</label>
+	<div class="mb-4 mt-2 flex flex-col">
+		<a class="mb-2 w-1/2 rounded bg-blue-400 px-3 py-2 font-bold text-white" href="/templates/form"
+			>adicionar novo formulário</a
+		>
+		<div>a</div>
+	</div>
 	<label for="remember">Mensagem de lembrete</label>
-	<p class="text-sm mb-4">
+	<p class="mb-4 text-sm">
 		Os símbolos <i>{`{{name}}`}</i> <i>{`{{theme}}`}</i> <i>{`{{time}}`}</i> <i>{`{{date}}`}</i>
 		<i>{`{{references}}`}</i> sempre serão substituídos quando a mensagem for formada
 	</p>
@@ -22,11 +29,11 @@
 		name="remember"
 		id="remember"
 		rows="8"
-		class="form-textarea w-full rounded-xl mb-8"
+		class="form-textarea mb-8 w-full rounded-xl"
 		bind:value={rememberMessage}
 	></textarea>
 	<label for="template">Template de convite</label>
-	<p class="text-sm mb-4">
+	<p class="mb-4 text-sm">
 		Os símbolos <i>{`{{name}}`}</i> <i>{`{{theme}}`}</i> <i>{`{{time}}`}</i> <i>{`{{date}}`}</i>
 		<i>{`{{references}}`}</i> sempre serão substituídos quando a mensagem for formada
 	</p>
@@ -37,10 +44,10 @@
 		id="template"
 		name="template"
 		rows="8"
-		class="form-textarea w-full rounded-xl mb-8"
+		class="form-textarea mb-8 w-full rounded-xl"
 		bind:value={template}
 	></textarea>
-	<div class="flex gap-2 justify-center">
+	<div class="flex justify-center gap-2">
 		<RoundButton type="submit" class="w-full bg-blue-800 text-gray-100">Alterar</RoundButton>
 	</div>
 </form>

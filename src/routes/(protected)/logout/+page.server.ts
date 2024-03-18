@@ -3,6 +3,7 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ request, fetch, cookies }) => {
+    console.log("logout")
     const cookie = cookies.get('session_id');
     cookies.delete('session_id');
 	const r = await fetch(`${PROTECTED_API_URLS.LOGOUT}`, {

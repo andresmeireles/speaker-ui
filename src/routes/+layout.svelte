@@ -3,5 +3,9 @@
 	import '../app.css';
 </script>
 
+<svelte:head>
+	<title>Speaker</title>
+</svelte:head>
+
 <SvelteToast />
 <slot />

@@ -11,7 +11,8 @@
 		{ name: 'Pessoas', href: '/speakers' },
 		{ name: 'Convites', href: '/invites' },
 		{ name: 'Templates', href: '/templates' },
-		{ name: 'Estatísticas', href: '/stats' }
+		{ name: 'Estatísticas', href: '/stats' },
+		{ name: 'Atas', href: '/minutes' }
 	];
 
 	const showMenu = writable<boolean>(true);

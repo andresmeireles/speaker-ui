@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { PUBLIC_API_URL } from '$env/static/public';
-	import { triggerToastMessage } from '$lib/actions/toast';
+	import { triggerToastError } from '$lib/actions/toast';
 	import type { ActionData } from './$types';
 	import Confirm from './components/Confirm.svelte';
 	import Login from './components/Login.svelte';
@@ -8,20 +8,12 @@
 	export let form: ActionData;
 
 	let insertCodePhase = false;
-	let options = {};
 	let email = '';
 
 	$: form, insertCodePhase, email;
 	$: {
 		if (form?.error) {
-			options = {
-				duration: 5000,
-				theme: {
-					'--toastBackground': '#F56565',
-					'--toastProgressBackground': '#C53030'
-				}
-			};
-			triggerToastMessage(form?.message, { options: options });
+			triggerToastError(form?.message);
 		}
 		if (form?.doLogin) {
 			insertCodePhase = true;
@@ -30,13 +22,13 @@
 	}
 </script>
 
-<div class="w-full h-full">
+<div class="h-full w-full">
 	{#if insertCodePhase}
 		<Confirm {email} {form} />
 	{:else}
 		<Login />
 	{/if}
-	<div class="justify-center text-center mt-12">
+	<div class="mt-12 justify-center text-center">
 		<div>api</div>
 		<pre>{PUBLIC_API_URL}</pre>
 	</div>

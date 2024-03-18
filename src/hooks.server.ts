@@ -34,10 +34,13 @@ export const handle: Handle = async ({ event, resolve }) => {
                 'Cookie': `session_id=${sessionId}`
             }
         });
+		
 		if (!userInfoRequest.ok) {
+			console.log("session error => ", await userInfoRequest.text())
 			event.cookies.delete('session_id');
 			throw redirect(302, '/login');
 		}
+
 		const userInfo: User = await userInfoRequest.json();
 		event.locals.user = userInfo;
 		event.locals.token = sessionId!;

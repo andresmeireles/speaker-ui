@@ -58,8 +58,10 @@ export const actions = {
 			httpOnly: true,
 			secure: false,
 			sameSite: 'lax',
+			path: '/',
 			maxAge
 		});
+		console.log("jeej")
 
 		throw redirect(303, '/');
 	}
